@@ -53,10 +53,29 @@
           </q-btn>
         </div>
       </q-toolbar>
+
+      <q-separator class="grey-3" />
+
+      <div class="row" style="margin: 0 24px;">
+        <q-tabs
+          v-model="tab"
+          inline-label
+        >
+          <q-tab style="max-height: 20px;">
+            <template v-slot>
+              <q-icon color="grey" name="home" size="1.3rem" />
+              <div style="margin: 0 5px;">主页</div>
+              <q-icon color="grey" name="close" />
+            </template>
+          </q-tab>
+          <q-tab name="alarms" icon="alarm" label="Alarms" />
+          <q-tab name="movies" icon="movie" label="Movies" />
+        </q-tabs>
+      </div>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240">
-      <q-scroll-area class="fit">
+      <q-scroll-area class="fit" :thumb-style="{ 'border-radius': '5px', 'background-color': 'rgba(144, 147, 153, 0.9)', width: '3px', height: '50px', top: '0px' }" >
         <q-list padding>
           <template v-for="link in links1" :key="link.text">
             <q-expansion-item
@@ -73,11 +92,12 @@
                   <q-item-label>{{ link.text }}</q-item-label>
                 </q-item-section>
               </template>
+
               <q-list padding>
                 <q-item
                   v-for="c in link.children"
                   :key="c.text"
-                  class="q-ml-md"
+                  class="q-pl-lg"
                   v-ripple
                   clickable
                 >
@@ -141,7 +161,7 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <q-tab-panels></q-tab-panels></q-tab-panels>
     </q-page-container>
   </q-layout>
 </template>
@@ -156,6 +176,8 @@ export default defineComponent({
   setup() {
     const leftDrawerOpen = ref(false)
     const search = ref('')
+    const tab = ref('mail')
+    const panel = ref('')
     return {
       leftDrawerOpen,
       toggleLeftDrawer() {
@@ -200,7 +222,8 @@ export default defineComponent({
         { text: 'Privacy' },
         { text: 'Policy & Safety' },
         { text: 'Test new features' }
-      ]
+      ],
+      tab
     }
   }
 })
