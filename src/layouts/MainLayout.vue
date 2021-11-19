@@ -56,20 +56,28 @@
 
       <q-separator class="grey-3" />
 
-      <div class="row" style="margin: 0 24px;">
+      <div class="row  q-px-md">
         <q-tabs
           v-model="tab"
           inline-label
+          dense
+          outside-arrows
+          align='left'
+          class='full-width'
         >
-          <q-tab style="max-height: 20px;">
+          <q-tab name='home' class='q-mx-xs' style="max-height: 20px;" >
             <template v-slot>
               <q-icon color="grey" name="home" size="1.3rem" />
               <div style="margin: 0 5px;">主页</div>
-              <q-icon color="grey" name="close" />
             </template>
           </q-tab>
-          <q-tab name="alarms" icon="alarm" label="Alarms" />
-          <q-tab name="movies" icon="movie" label="Movies" />
+          <q-tab :name='p.icon' style="max-height: 20px;" class='q-mx-xs q-px-sm' v-for='p in panel' :key='p' >
+            <template v-slot>
+              <q-icon color="grey" :name="p.icon" size="1.3rem" />
+              <div style="margin: 0 5px;">{{ p.text }}</div>
+              <q-icon color="grey" name="close" @click='rmTab(p)' />
+            </template>
+          </q-tab>
         </q-tabs>
       </div>
     </q-header>
@@ -100,6 +108,7 @@
                   class="q-pl-lg"
                   v-ripple
                   clickable
+                  @click='addTab(c)'
                 >
                   <q-item-section avatar>
                     <q-icon color="grey" :name="c.icon" />
@@ -161,23 +170,52 @@
     </q-drawer>
 
     <q-page-container>
-      <q-tab-panels></q-tab-panels></q-tab-panels>
+      <q-tab-panels v-model='tab' animated>
+        <q-tab-panel v-for='p in panel' :name='p.icon' :key='p'>
+          <div class='text-h6'>{{ p.text }}</div>
+          <p>{{ p.text }}</p>
+        </q-tab-panel>
+      </q-tab-panels>
     </q-page-container>
   </q-layout>
 </template>
 
 <script lang="ts">
 import { fabYoutube } from '@quasar/extras/fontawesome-v5'
-
 import { defineComponent, ref } from 'vue'
+
+interface tabProp {
+  icon: string;
+  text: string;
+}
+
+interface tabProps {
+  icon: string;
+  text: string;
+  children?: tabProp[]
+}
 
 export default defineComponent({
   name: 'MainLayout',
   setup() {
     const leftDrawerOpen = ref(false)
     const search = ref('')
-    const tab = ref('mail')
-    const panel = ref('')
+    const tab = ref('home')
+    const panel = ref<Array<tabProps>>([])
+
+    const addTab = (_tab: tabProps) => {
+        panel.value.push(_tab)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        tab.value = _tab.icon ? _tab.icon : tab.value
+    }
+
+    const rmTab = (_tab: tabProps) => {
+      const i = panel.value.indexOf(_tab, 0)
+      panel.value.splice(i, 1)
+
+      tab.value = 'home'
+      console.log(tab.value)
+    }
     return {
       leftDrawerOpen,
       toggleLeftDrawer() {
@@ -223,7 +261,10 @@ export default defineComponent({
         { text: 'Policy & Safety' },
         { text: 'Test new features' }
       ],
-      tab
+      tab,
+      panel,
+      addTab,
+      rmTab
     }
   }
 })
