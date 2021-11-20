@@ -65,19 +65,19 @@
           align='left'
           class='full-width'
         >
-          <q-tab name='home' class='q-mx-xs' style="max-height: 20px;" >
+          <q-router-tab name='home' class='q-mx-xs' style="max-height: 20px;" >
             <template v-slot>
               <q-icon color="grey" name="home" size="1.3rem" />
               <div style="margin: 0 5px;">主页</div>
             </template>
-          </q-tab>
-          <q-tab :name='p.icon' style="max-height: 20px;" class='q-mx-xs q-px-sm' v-for='p in panel' :key='p' >
+          </q-router-tab>
+          <q-router-tab :name='p.icon' style="max-height: 20px;" class='q-mx-xs q-px-sm' v-for='p in panel' :key='p' >
             <template v-slot>
               <q-icon color="grey" :name="p.icon" size="1.3rem" />
               <div style="margin: 0 5px;">{{ p.text }}</div>
-              <q-icon color="grey" name="close" @click='rmTab(p)' />
+              <q-icon color="grey" name="close" @click.stop='rmTab(p)' />
             </template>
-          </q-tab>
+          </q-router-tab>
         </q-tabs>
       </div>
     </q-header>
@@ -170,12 +170,9 @@
     </q-drawer>
 
     <q-page-container>
-      <q-tab-panels v-model='tab' animated>
-        <q-tab-panel v-for='p in panel' :name='p.icon' :key='p'>
-          <div class='text-h6'>{{ p.text }}</div>
-          <p>{{ p.text }}</p>
-        </q-tab-panel>
-      </q-tab-panels>
+      <keep-alive>
+        <component :is='currentComponent' ></component>
+      </keep-alive>
     </q-page-container>
   </q-layout>
 </template>
@@ -202,6 +199,7 @@ export default defineComponent({
     const search = ref('')
     const tab = ref('home')
     const panel = ref<Array<tabProps>>([])
+    const currentComponent = ref(null)
 
     const addTab = (_tab: tabProps) => {
         panel.value.push(_tab)
@@ -213,7 +211,7 @@ export default defineComponent({
       const i = panel.value.indexOf(_tab, 0)
       panel.value.splice(i, 1)
 
-      tab.value = 'home'
+      tab.value = panel.value.length > 0 ? panel.value[panel.value.length - 1].icon : 'home'
       console.log(tab.value)
     }
     return {
@@ -223,6 +221,7 @@ export default defineComponent({
       },
       search,
       fabYoutube,
+      currentComponent,
       links1: [
         { icon: 'home', text: 'Home', children: [  { icon: 'whatshot', text: 'Trending' }, { icon: 'subscriptions', text: 'Subscriptions' } ] },
         { icon: 'whatshot', text: 'Trending' },
