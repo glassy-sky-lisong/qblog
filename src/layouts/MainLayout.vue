@@ -65,13 +65,13 @@
           align='left'
           class='full-width'
         >
-          <q-router-tab name='home' class='q-mx-xs' style="max-height: 20px;" >
+          <q-router-tab name='home' to='/' class='q-mx-xs' style="max-height: 20px;" >
             <template v-slot>
               <q-icon color="grey" name="home" size="1.3rem" />
               <div style="margin: 0 5px;">主页</div>
             </template>
           </q-router-tab>
-          <q-router-tab :name='p.icon' style="max-height: 20px;" class='q-mx-xs q-px-sm' v-for='p in panel' :key='p' >
+          <q-router-tab :name='p.icon' :to='p.to' style="max-height: 20px;" class='q-mx-xs q-px-sm' v-for='p in panel' :key='p' >
             <template v-slot>
               <q-icon color="grey" :name="p.icon" size="1.3rem" />
               <div style="margin: 0 5px;">{{ p.text }}</div>
@@ -184,11 +184,13 @@ import { defineComponent, ref } from 'vue'
 interface tabProp {
   icon: string;
   text: string;
+  to?: string;
 }
 
 interface tabProps {
   icon: string;
   text: string;
+  to?: string;
   children?: tabProp[]
 }
 
@@ -199,7 +201,7 @@ export default defineComponent({
     const search = ref('')
     const tab = ref('home')
     const panel = ref<Array<tabProps>>([])
-    const currentComponent = ref(null)
+    const currentComponent = ref('/')
 
     const addTab = (_tab: tabProps) => {
         panel.value.push(_tab)
@@ -223,7 +225,7 @@ export default defineComponent({
       fabYoutube,
       currentComponent,
       links1: [
-        { icon: 'home', text: 'Home', children: [  { icon: 'whatshot', text: 'Trending' }, { icon: 'subscriptions', text: 'Subscriptions' } ] },
+        { icon: 'home', text: 'Home', children: [  { icon: 'whatshot', text: 'Trending', to: '/test1' }, { icon: 'subscriptions', text: 'Subscriptions', to: '/test2' } ] },
         { icon: 'whatshot', text: 'Trending' },
         { icon: 'subscriptions', text: 'Subscriptions' }
       ],
