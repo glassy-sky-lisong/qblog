@@ -117,7 +117,7 @@
                   class="q-pl-lg"
                   v-ripple
                   clickable
-                  @click='addTab(c)'
+                  @click.stop='addTab(c)'
                 >
                   <q-item-section avatar>
                     <q-icon color="grey" :name="c.icon" />
@@ -215,7 +215,9 @@ export default defineComponent({
     const addTab = (_tab: tabProps) => {
         console.log(panel.value.indexOf(_tab, 0), 'hahaha')
         panel.value.indexOf(_tab, 0) === -1 && panel.value.push(_tab)
-        tab.value = _tab.icon ? _tab.icon : tab.value
+        tab.value = _tab.icon
+
+        console.log(panel.value)
     }
 
     const rmTab = (_tab: tabProps) => {
@@ -223,16 +225,13 @@ export default defineComponent({
       panel.value.splice(i, 1)
 
       tab.value = panel.value.length > 0 ? panel.value[panel.value.length - 1].icon : 'home'
-      console.log(tab.value)
+      console.log(tab.value, panel.value)
     }
 
     watch(tab, (n, o) => {
       console.log(n, o)
     })
 
-    watch(panel, (n, o) => {
-      console.log(n, o)
-    })
     return {
       leftDrawerOpen,
       toggleLeftDrawer() {
