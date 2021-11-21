@@ -65,19 +65,19 @@
           align='left'
           class='full-width'
         >
-          <q-router-tab name='home' to='/' class='q-mx-xs' style="max-height: 20px;" >
+          <q-route-tab name='home' to='/' class='q-mx-xs' style="max-height: 20px;" >
             <template v-slot>
               <q-icon color="grey" name="home" size="1.3rem" />
               <div style="margin: 0 5px;">主页</div>
             </template>
-          </q-router-tab>
-          <q-router-tab :name='p.icon' :to='p.to' style="max-height: 20px;" class='q-mx-xs q-px-sm' v-for='p in panel' :key='p' >
+          </q-route-tab>
+          <q-route-tab :name='p.icon' :to='p.to' style="max-height: 20px;" class='q-mx-xs q-px-sm' v-for='p in panel' :key='p' >
             <template v-slot>
               <q-icon color="grey" :name="p.icon" size="1.3rem" />
               <div style="margin: 0 5px;">{{ p.text }}</div>
               <q-icon color="grey" name="close" @click.stop='rmTab(p)' />
             </template>
-          </q-router-tab>
+          </q-route-tab>
         </q-tabs>
       </div>
     </q-header>
@@ -85,6 +85,15 @@
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240">
       <q-scroll-area class="fit" :thumb-style="{ 'border-radius': '5px', 'background-color': 'rgba(144, 147, 153, 0.9)', width: '3px', height: '50px', top: '0px' }" >
         <q-list padding>
+           <q-item v-ripple clickable @click="() => { tab = 'home' }">
+            <q-item-section avatar>
+              <q-icon color="grey" :name="link0.icon" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ link0.text }}</q-item-label>
+            </q-item-section>
+          </q-item>
+
           <template v-for="link in links1" :key="link.text">
             <q-expansion-item
               v-if="link.children"
@@ -171,7 +180,7 @@
 
     <q-page-container>
       <keep-alive>
-        <component :is='currentComponent' ></component>
+        <router-view></router-view>
       </keep-alive>
     </q-page-container>
   </q-layout>
@@ -179,7 +188,7 @@
 
 <script lang="ts">
 import { fabYoutube } from '@quasar/extras/fontawesome-v5'
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 
 interface tabProp {
   icon: string;
@@ -201,11 +210,11 @@ export default defineComponent({
     const search = ref('')
     const tab = ref('home')
     const panel = ref<Array<tabProps>>([])
-    const currentComponent = ref('/')
+    const currentComponent = ref('Index')
 
     const addTab = (_tab: tabProps) => {
-        panel.value.push(_tab)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        console.log(panel.value.indexOf(_tab, 0), 'hahaha')
+        panel.value.indexOf(_tab, 0) === -1 && panel.value.push(_tab)
         tab.value = _tab.icon ? _tab.icon : tab.value
     }
 
@@ -216,6 +225,14 @@ export default defineComponent({
       tab.value = panel.value.length > 0 ? panel.value[panel.value.length - 1].icon : 'home'
       console.log(tab.value)
     }
+
+    watch(tab, (n, o) => {
+      console.log(n, o)
+    })
+
+    watch(panel, (n, o) => {
+      console.log(n, o)
+    })
     return {
       leftDrawerOpen,
       toggleLeftDrawer() {
@@ -224,8 +241,11 @@ export default defineComponent({
       search,
       fabYoutube,
       currentComponent,
+      link0: {
+        icon: 'home', text: 'Home', to: '/'
+      },
       links1: [
-        { icon: 'home', text: 'Home', children: [  { icon: 'whatshot', text: 'Trending', to: '/test1' }, { icon: 'subscriptions', text: 'Subscriptions', to: '/test2' } ] },
+        { icon: 'folder', text: 'Folder', children: [  { icon: 'whatshot', text: 'Trending', to: '/test1' }, { icon: 'subscriptions', text: 'Subscriptions', to: '/test2' } ] },
         { icon: 'whatshot', text: 'Trending' },
         { icon: 'subscriptions', text: 'Subscriptions' }
       ],
