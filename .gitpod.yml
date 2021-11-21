@@ -1,6 +1,6 @@
 tasks:
-  - init: yarn global add @quasar/cli && yarn && PATH=$(yarn global bin):$PATH; >> ~/.bashrc && source ~/.bashrc
-    command: quasar dev
+  - init: chmod +777 ./init.sh
+    command: ./init.sh
 ports:
   - port: 8080
     onOpen: open-preview

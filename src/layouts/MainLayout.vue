@@ -71,11 +71,11 @@
               <div style="margin: 0 5px;">主页</div>
             </template>
           </q-route-tab>
-          <q-route-tab :name='p.icon' :to='p.to' style="max-height: 20px;" class='q-mx-xs q-px-sm' v-for='p in panel' :key='p' >
+          <q-route-tab @click="(evt, nav) => { evt.navigate }" :name='p.icon' :to='p.to' style="max-height: 20px;" class='q-mx-xs q-px-sm' v-for='p in panel' :key='p' >
             <template v-slot>
               <q-icon color="grey" :name="p.icon" size="1.3rem" />
               <div style="margin: 0 5px;">{{ p.text }}</div>
-              <q-icon color="grey" name="close" @click.stop='rmTab(p)' />
+              <q-icon color="grey" name="close" @click.prevent.stop='rmTab(p)' />
             </template>
           </q-route-tab>
         </q-tabs>
@@ -85,7 +85,7 @@
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240">
       <q-scroll-area class="fit" :thumb-style="{ 'border-radius': '5px', 'background-color': 'rgba(144, 147, 153, 0.9)', width: '3px', height: '50px', top: '0px' }" >
         <q-list padding>
-           <q-item v-ripple clickable @click="() => { tab = 'home' }">
+          <q-item v-ripple clickable @click="() => { tab = 'home' }">
             <q-item-section avatar>
               <q-icon color="grey" :name="link0.icon" />
             </q-item-section>
@@ -117,7 +117,7 @@
                   class="q-pl-lg"
                   v-ripple
                   clickable
-                  @click.stop='addTab(c)'
+                  @click='addTab(c)'
                 >
                   <q-item-section avatar>
                     <q-icon color="grey" :name="c.icon" />
@@ -214,10 +214,10 @@ export default defineComponent({
 
     const addTab = (_tab: tabProps) => {
         console.log(panel.value.indexOf(_tab, 0), 'hahaha')
-        panel.value.indexOf(_tab, 0) === -1 && panel.value.push(_tab)
+         panel.value.push(_tab)
         tab.value = _tab.icon
 
-        console.log(panel.value)
+        console.log('add')
     }
 
     const rmTab = (_tab: tabProps) => {
@@ -244,7 +244,7 @@ export default defineComponent({
         icon: 'home', text: 'Home', to: '/'
       },
       links1: [
-        { icon: 'folder', text: 'Folder', children: [  { icon: 'whatshot', text: 'Trending', to: '/test1' }, { icon: 'subscriptions', text: 'Subscriptions', to: '/test2' } ] },
+        { icon: 'folder', text: 'Folder', children: [  { icon: 'whatshot', text: 'Trending', to: '/test1' }, { icon: 'subscriptions', text: 'Subscriptions', to: '/test2' }, { icon: 'thumb_up_alt', text: 'Liked videos', to: '/test3' } ] },
         { icon: 'whatshot', text: 'Trending' },
         { icon: 'subscriptions', text: 'Subscriptions' }
       ],
