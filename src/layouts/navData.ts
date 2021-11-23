@@ -1,7 +1,9 @@
+import { fabYoutube } from '@quasar/extras/fontawesome-v5'
+
 export interface navProp {
   icon: string;
   label: string;
-  to?: string;
+  to: string;
 }
 
 export interface exNavProp {
@@ -10,9 +12,40 @@ export interface exNavProp {
   children: navProp[]
 }
 
-const demoData: Array<navProp | exNavProp> = [
+export interface tabProp extends navProp {
 
+}
+
+export const nav0: navProp = {
+  icon: 'home',
+  label: 'Home',
+  to: '/'
+}
+
+export const nav1: Array<navProp | exNavProp> = [
+  { icon: 'folder', label: 'Folder', children: [  { icon: 'whatshot', label: 'Trending', to: '/test1' }, { icon: 'subscriptions', label: 'Subscriptions', to: '/test2' }, { icon: 'thumb_up_alt', label: 'Liked videos', to: '/test3' } ] },
+  { icon: 'whatshot', label: 'Trending', to: '/' },
+  { icon: 'subscriptions', label: 'Subscriptions', to: '/' }
 ]
 
-export default demoData
+export const nav2: Array<navProp | exNavProp> = [
+  { icon: 'folder', label: 'Library', to: '/' },
+  { icon: 'restore', label: 'History', to: '/' },
+  { icon: 'watch_later', label: 'Watch  later', to: '/' },
+  { icon: 'thumb_up_alt', label: 'Liked videos', to: '/' }
+]
+
+export const nav3: Array<navProp | exNavProp> = [
+  { icon: fabYoutube, label: 'YouTube Premium', to: '/' },
+  { icon: 'local_movies', label: 'Movies & Shows', to: '/' },
+  { icon: 'videogame_asset', label: 'Gaming', to: '/' },
+  { icon: 'live_tv', label: 'Live', to: '/' }
+]
+
+export const nav4: Array<navProp | exNavProp> = [
+  { icon: 'settings', label: 'Settings', to: '/' },
+  { icon: 'flag', label: 'Report history', to: '/' },
+  { icon: 'help', label: 'Help', to: '/' },
+  { icon: 'feedback', label: 'Send feedback', to: '/' }
+]
 
