@@ -9,6 +9,12 @@
           <q-toolbar-title shrink class="q-ml-xs">YouTube</q-toolbar-title>
         </q-btn>
 
+        <q-breadcrumbs separator='/'>
+          <q-breadcrumbs-el icon="home" />
+          <q-breadcrumbs-el label="Components" icon="widgets" />
+          <q-breadcrumbs-el label="Breadcrumbs" icon="navigation" />
+        </q-breadcrumbs>
+
         <q-space />
 
         <div class="YL__toolbar-input-container row no-wrap">
@@ -29,9 +35,7 @@
           />
         </div>
 
-        <q-space />
-
-        <div class="q-gutter-sm row items-center no-wrap">
+        <div class="q-gutter-sm row items-center no-wrap q-pl-md">
           <q-btn round dense flat class="grey-8" icon="video_call" v-if="$q.screen.gt.sm">
             <q-tooltip>Create a video or post</q-tooltip>
           </q-btn>
@@ -56,42 +60,13 @@
 
       <q-separator class="grey-3" />
 
-      <div class="row  q-px-md">
-        <q-tabs
-          v-model="currentTab"
-          inline-label
-          dense
-          outside-arrows
-          align='left'
-          class='full-width'
-        >
-          <q-route-tab
-            name='home'
-            to='/'
-            class='q-mx-xs'
-            style="max-height: 20px;"
-            @click.prevent="(e, go) => { go('/') }"
-          >
-            <template v-slot>
-              <q-icon color="grey" name="home" size="1.3rem" />
-              <div style="margin: 0 5px;">主页</div>
-            </template>
-          </q-route-tab>
-          <q-route-tab @click.prevent="(e, go) => { go(p.to) }" :name='p.icon' :to='p.to' style="max-height: 20px;" class='q-mx-xs q-px-sm' v-for='p in tabs' :key='p' >
-            <template v-slot>
-              <q-icon color="grey" :name="p.icon" size="1.3rem" />
-              <div style="margin: 0 5px;">{{ p.label }}</div>
-              <q-icon color="grey" name="close" @click.prevent.stop='rmTab(p)' />
-            </template>
-          </q-route-tab>
-        </q-tabs>
-      </div>
+      <tag-view ref='tabViewRef' ></tag-view>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240">
       <q-scroll-area class="fit" :thumb-style="{ 'border-radius': '5px', 'background-color': 'rgba(144, 147, 153, 0.9)', width: '3px', height: '50px', top: '0px' }" >
         <q-list padding>
-          <q-item v-ripple clickable @click="() => { $router.push('/') }">
+          <q-item v-ripple clickable @click="$router.push('/')">
             <q-item-section avatar>
               <q-icon color="grey" :name="link0.icon" />
             </q-item-section>
@@ -123,7 +98,7 @@
                   class="q-pl-lg"
                   v-ripple
                   clickable
-                  @click='addTab(c)'
+                  @click='$refs.tabViewRef.addTab(c)'
                 >
                   <q-item-section avatar>
                     <q-icon color="grey" :name="c.icon" />
@@ -194,38 +169,19 @@
 
 <script lang="ts">
 import { fabYoutube } from '@quasar/extras/fontawesome-v5'
-import { tabProp, nav0, nav1, nav2, nav3, nav4 } from './navData'
-import { defineComponent, ref, watch } from 'vue'
+import { nav0, nav1, nav2, nav3, nav4 } from './navData'
+import TagView from 'src/components/TagView.vue'
+import { defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'MainLayout',
+  components: { TagView },
   setup() {
     const router = useRouter()
     const leftDrawerOpen = ref(false)
     const search = ref('')
-    const currentTab = ref('home')
-    const tabs = ref<Array<tabProp>>([])
-
-    const addTab = (_tab: tabProp) => {
-        console.log(tabs.value.indexOf(_tab, 0), 'hahaha')
-        tabs.value.indexOf(_tab, 0) === -1 && tabs.value.push(_tab)
-        void router.push(_tab.to || '/')
-        console.log('add')
-    }
-
-    const rmTab = (_tab: tabProp) => {
-      const i = tabs.value.indexOf(_tab, 0)
-      tabs.value.splice(i, 1)
-
-      let to = tabs.value.length > 0 ? tabs.value[tabs.value.length - 1].to || '/' : '/'
-
-      void router.push(to)
-    }
-
-    watch(currentTab, (n, o) => {
-      console.log(n, o)
-    })
+    const tagViewRef = ref(null)
 
     return {
       leftDrawerOpen,
@@ -254,10 +210,7 @@ export default defineComponent({
         { text: 'Policy & Safety' },
         { text: 'Test new features' }
       ],
-      currentTab,
-      tabs,
-      addTab,
-      rmTab
+      tagViewRef
     }
   }
 })
@@ -267,7 +220,7 @@ export default defineComponent({
 .YL {
   &__toolbar-input-container {
     min-width: 100px;
-    width: 55%;
+    width: 20%;
   }
 
   &__toolbar-input-btn {
