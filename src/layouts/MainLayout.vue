@@ -58,7 +58,7 @@
 
       <div class="row  q-px-md">
         <q-tabs
-          v-model="tab"
+          v-model="currentTab"
           inline-label
           dense
           outside-arrows
@@ -77,10 +77,10 @@
               <div style="margin: 0 5px;">主页</div>
             </template>
           </q-route-tab>
-          <q-route-tab @click.prevent="(e, go) => { go(p.to) }" :name='p.icon' :to='p.to' style="max-height: 20px;" class='q-mx-xs q-px-sm' v-for='p in panel' :key='p' >
+          <q-route-tab @click.prevent="(e, go) => { go(p.to) }" :name='p.icon' :to='p.to' style="max-height: 20px;" class='q-mx-xs q-px-sm' v-for='p in tabs' :key='p' >
             <template v-slot>
               <q-icon color="grey" :name="p.icon" size="1.3rem" />
-              <div style="margin: 0 5px;">{{ p.text }}</div>
+              <div style="margin: 0 5px;">{{ p.label }}</div>
               <q-icon color="grey" name="close" @click.prevent.stop='rmTab(p)' />
             </template>
           </q-route-tab>
@@ -96,11 +96,11 @@
               <q-icon color="grey" :name="link0.icon" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>{{ link0.text }}</q-item-label>
+              <q-item-label>{{ link0.label }}</q-item-label>
             </q-item-section>
           </q-item>
 
-          <template v-for="link in links1" :key="link.text">
+          <template v-for="link in links1" :key="link.label">
             <q-expansion-item
               v-if="link.children"
               :icon="link.icon"
@@ -193,22 +193,9 @@
 </template>
 
 <script lang="ts">
-import { fabYoutube } from '@quasar/extras/fontawesome-v5'
+import { tabProp, nav0, nav1, nav2, nav3, nav4 } from './navData'
 import { defineComponent, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-
-interface tabProp {
-  icon: string;
-  text: string;
-  to?: string;
-}
-
-interface tabProps {
-  icon: string;
-  text: string;
-  to?: string;
-  children?: tabProp[]
-}
 
 export default defineComponent({
   name: 'MainLayout',
@@ -216,23 +203,22 @@ export default defineComponent({
     const router = useRouter()
     const leftDrawerOpen = ref(false)
     const search = ref('')
-    const tab = ref('home')
-    const panel = ref<Array<tabProps>>([])
-    const currentComponent = ref('Index')
+    const currentTab = ref('home')
+    const tabs = ref<Array<tabProp>>([])
 
-    const addTab = (_tab: tabProps) => {
-        console.log(panel.value.indexOf(_tab, 0), 'hahaha')
-        panel.value.indexOf(_tab, 0) === -1 && panel.value.push(_tab)
+    const addTab = (_tab: tabProp) => {
+        console.log(tabs.value.indexOf(_tab, 0), 'hahaha')
+        tabs.value.indexOf(_tab, 0) === -1 && tabs.value.push(_tab)
         void router.push(_tab.to || '/')
         console.log('add')
     }
 
-    const rmTab = (_tab: tabProps) => {
-      const i = panel.value.indexOf(_tab, 0)
-      panel.value.splice(i, 1)
+    const rmTab = (_tab: tabProp) => {
+      const i = tabs.value.indexOf(_tab, 0)
+      tabs.value.splice(i, 1)
     }
 
-    watch(tab, (n, o) => {
+    watch(currentTab, (n, o) => {
       console.log(n, o)
     })
 
@@ -242,34 +228,11 @@ export default defineComponent({
         leftDrawerOpen.value = !leftDrawerOpen.value
       },
       search,
-      fabYoutube,
-      currentComponent,
-      link0: {
-        icon: 'home', text: 'Home', to: '/'
-      },
-      links1: [
-        { icon: 'folder', text: 'Folder', children: [  { icon: 'whatshot', text: 'Trending', to: '/test1' }, { icon: 'subscriptions', text: 'Subscriptions', to: '/test2' }, { icon: 'thumb_up_alt', text: 'Liked videos', to: '/test3' } ] },
-        { icon: 'whatshot', text: 'Trending' },
-        { icon: 'subscriptions', text: 'Subscriptions' }
-      ],
-      links2: [
-        { icon: 'folder', text: 'Library' },
-        { icon: 'restore', text: 'History' },
-        { icon: 'watch_later', text: 'Watch later' },
-        { icon: 'thumb_up_alt', text: 'Liked videos' }
-      ],
-      links3: [
-        { icon: fabYoutube, text: 'YouTube Premium' },
-        { icon: 'local_movies', text: 'Movies & Shows' },
-        { icon: 'videogame_asset', text: 'Gaming' },
-        { icon: 'live_tv', text: 'Live' }
-      ],
-      links4: [
-        { icon: 'settings', text: 'Settings' },
-        { icon: 'flag', text: 'Report history' },
-        { icon: 'help', text: 'Help' },
-        { icon: 'feedback', text: 'Send feedback' }
-      ],
+      link0: nav0,
+      links1:nav1,
+      links2: nav2,
+      links3: nav3,
+      links4: nav4,
       buttons1: [
         { text: 'About' },
         { text: 'Press' },
@@ -285,8 +248,8 @@ export default defineComponent({
         { text: 'Policy & Safety' },
         { text: 'Test new features' }
       ],
-      tab,
-      panel,
+      currentTab,
+      tabs,
       addTab,
       rmTab
     }
