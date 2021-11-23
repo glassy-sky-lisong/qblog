@@ -119,7 +119,7 @@
               <q-list padding>
                 <q-item
                   v-for="c in link.children"
-                  :key="c.text"
+                  :key="c.label"
                   class="q-pl-lg"
                   v-ripple
                   clickable
@@ -129,7 +129,7 @@
                     <q-icon color="grey" :name="c.icon" />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>{{ c.text }}</q-item-label>
+                    <q-item-label>{{ c.label }}</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -193,6 +193,7 @@
 </template>
 
 <script lang="ts">
+import { fabYoutube } from '@quasar/extras/fontawesome-v5'
 import { tabProp, nav0, nav1, nav2, nav3, nav4 } from './navData'
 import { defineComponent, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
@@ -216,6 +217,10 @@ export default defineComponent({
     const rmTab = (_tab: tabProp) => {
       const i = tabs.value.indexOf(_tab, 0)
       tabs.value.splice(i, 1)
+
+      let to = tabs.value.length > 0 ? tabs.value[tabs.value.length - 1].to || '/' : '/'
+
+      void router.push(to)
     }
 
     watch(currentTab, (n, o) => {
@@ -228,6 +233,7 @@ export default defineComponent({
         leftDrawerOpen.value = !leftDrawerOpen.value
       },
       search,
+      fabYoutube,
       link0: nav0,
       links1:nav1,
       links2: nav2,
