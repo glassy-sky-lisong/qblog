@@ -104,7 +104,7 @@
             <q-expansion-item
               v-if="link.children"
               :icon="link.icon"
-              :label="link.text"
+              :label="link.label"
               expand-separator
             >
               <template v-slot:header>
@@ -112,7 +112,7 @@
                   <q-icon color="grey" :name="link.icon" />
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>{{ link.text }}</q-item-label>
+                  <q-item-label>{{ link.label }}</q-item-label>
                 </q-item-section>
               </template>
 
@@ -139,19 +139,19 @@
                 <q-icon color="grey" :name="link.icon" />
               </q-item-section>
               <q-item-section>
-                <q-item-label>{{ link.text }}</q-item-label>
+                <q-item-label>{{ link.label }}</q-item-label>
               </q-item-section>
             </q-item>
           </template>
 
           <q-separator class="q-my-md" />
 
-          <q-item v-for="link in links2" :key="link.text" v-ripple clickable>
+          <q-item v-for="link in links2" :key="link.label" v-ripple clickable>
             <q-item-section avatar>
               <q-icon color="grey" :name="link.icon" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
+              <q-item-label>{{ link.label }}</q-item-label>
             </q-item-section>
           </q-item>
 
@@ -161,23 +161,23 @@
             More for YouTube
           </q-item-label>
 
-           <q-item v-for="link in links3" :key="link.text" v-ripple clickable>
+           <q-item v-for="link in links3" :key="link.label" v-ripple clickable>
             <q-item-section avatar>
               <q-icon color="grey" :name="link.icon" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
+              <q-item-label>{{ link.label }}</q-item-label>
             </q-item-section>
           </q-item>
 
           <q-separator class="q-my-md" />
 
-           <q-item v-for="link in links4" :key="link.text" v-ripple clickable>
+           <q-item v-for="link in links4" :key="link.label" v-ripple clickable>
             <q-item-section avatar>
               <q-icon color="grey" :name="link.icon" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
+              <q-item-label>{{ link.label }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
