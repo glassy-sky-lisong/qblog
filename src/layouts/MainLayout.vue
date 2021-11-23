@@ -65,13 +65,19 @@
           align='left'
           class='full-width'
         >
-          <q-route-tab name='home' to='/' class='q-mx-xs' style="max-height: 20px;" >
+          <q-route-tab
+            name='home'
+            to='/'
+            class='q-mx-xs'
+            style="max-height: 20px;"
+            @click.prevent="(e, go) => { go('/') }"
+          >
             <template v-slot>
               <q-icon color="grey" name="home" size="1.3rem" />
               <div style="margin: 0 5px;">主页</div>
             </template>
           </q-route-tab>
-          <q-route-tab @click="(evt, nav) => { evt.navigate }" :name='p.icon' :to='p.to' style="max-height: 20px;" class='q-mx-xs q-px-sm' v-for='p in panel' :key='p' >
+          <q-route-tab @click.prevent="(e, go) => { go(p.to) }" :name='p.icon' :to='p.to' style="max-height: 20px;" class='q-mx-xs q-px-sm' v-for='p in panel' :key='p' >
             <template v-slot>
               <q-icon color="grey" :name="p.icon" size="1.3rem" />
               <div style="margin: 0 5px;">{{ p.text }}</div>
@@ -85,7 +91,7 @@
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240">
       <q-scroll-area class="fit" :thumb-style="{ 'border-radius': '5px', 'background-color': 'rgba(144, 147, 153, 0.9)', width: '3px', height: '50px', top: '0px' }" >
         <q-list padding>
-          <q-item v-ripple clickable @click="() => { tab = 'home' }">
+          <q-item v-ripple clickable @click="() => { $router.push('/') }">
             <q-item-section avatar>
               <q-icon color="grey" :name="link0.icon" />
             </q-item-section>
@@ -189,6 +195,7 @@
 <script lang="ts">
 import { fabYoutube } from '@quasar/extras/fontawesome-v5'
 import { defineComponent, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 interface tabProp {
   icon: string;
@@ -206,6 +213,7 @@ interface tabProps {
 export default defineComponent({
   name: 'MainLayout',
   setup() {
+    const router = useRouter()
     const leftDrawerOpen = ref(false)
     const search = ref('')
     const tab = ref('home')
@@ -214,18 +222,14 @@ export default defineComponent({
 
     const addTab = (_tab: tabProps) => {
         console.log(panel.value.indexOf(_tab, 0), 'hahaha')
-         panel.value.push(_tab)
-        tab.value = _tab.icon
-
+        panel.value.indexOf(_tab, 0) === -1 && panel.value.push(_tab)
+        void router.push(_tab.to || '/')
         console.log('add')
     }
 
     const rmTab = (_tab: tabProps) => {
       const i = panel.value.indexOf(_tab, 0)
       panel.value.splice(i, 1)
-
-      tab.value = panel.value.length > 0 ? panel.value[panel.value.length - 1].icon : 'home'
-      console.log(tab.value, panel.value)
     }
 
     watch(tab, (n, o) => {
