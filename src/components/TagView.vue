@@ -1,5 +1,5 @@
 <template>
-  <div class='row  q-px-md'>
+  <div class='row  q-px-md q-pt-xs'>
     <q-tabs
       v-model='currentTab'
       inline-label

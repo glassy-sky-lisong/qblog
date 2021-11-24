@@ -9,8 +9,13 @@
           <q-toolbar-title shrink class="q-ml-xs">YouTube</q-toolbar-title>
         </q-btn>
 
-        <q-breadcrumbs separator='/'>
-          <q-breadcrumbs-el icon="home" />
+        <q-breadcrumbs
+          separator='/'
+          active-color="text-grey-8"
+          gutter="xs"
+          class='q-ml-sm'
+        >
+          <q-breadcrumbs-el icon="home" label='主页' />
           <q-breadcrumbs-el label="Components" icon="widgets" />
           <q-breadcrumbs-el label="Breadcrumbs" icon="navigation" />
         </q-breadcrumbs>
