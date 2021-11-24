@@ -27,7 +27,7 @@ export default defineComponent({
       default: 'notfound'
     },
     item: {
-      type:
+      type: String | Number,
     }
   }
 })
