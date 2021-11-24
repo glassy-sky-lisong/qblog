@@ -9,17 +9,7 @@
           <q-toolbar-title shrink class="q-ml-xs">YouTube</q-toolbar-title>
         </q-btn>
 
-        <q-breadcrumbs
-          v-if='$q.screen.gt.sm'
-          separator='/'
-          active-color="text-grey-8"
-          gutter="xs"
-          class='q-ml-sm'
-        >
-          <template v-for='(v, i) in breadcrumbs' :key='i + v.title'>
-            <q-breadcrumbs-el icon="v.icon" label='v.title' />
-          </template>
-        </q-breadcrumbs>
+       <breadcrumbs />
 
         <q-space />
 
@@ -72,6 +62,9 @@
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240">
       <q-scroll-area class="fit" :thumb-style="{ 'border-radius': '5px', 'background-color': 'rgba(144, 147, 153, 0.9)', width: '3px', height: '50px', top: '0px' }" >
         <q-list padding>
+          <q-item-label class='text-weight-bold text-uppercase q-item__label--header'>
+            subTitle
+          </q-item-label>
           <q-item v-ripple clickable @click="$router.push('/')">
             <q-item-section avatar>
               <q-icon color="grey" :name="link0.icon" />
@@ -176,23 +169,19 @@
 <script lang="ts">
 import { fabYoutube } from '@quasar/extras/fontawesome-v5'
 import { nav0, nav1, nav2, nav3, nav4 } from './navData'
-import TagView from 'src/components/TagView.vue'
-import { defineComponent, ref, onUpdated, computed } from 'vue'
-import { useRouter, useRoute, RouteLocationMatched } from 'vue-router'
+import TagView from 'src/components/TagView/TagView.vue'
+import Breadcrumbs from 'src/components/Breadcrumbs/Breadcrumbs.vue'
+import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   name: 'MainLayout',
-  components: { TagView },
+  components: { TagView, Breadcrumbs },
   setup() {
-    const route = useRoute()
     const leftDrawerOpen = ref(false)
     const search = ref('')
     const tagViewRef = ref(null)
 
-    const breadcrumbsHandle = (arrs: RouteLocationMatched[]) => {
-       return arrs.map((item) => item.meta)
-    }
-    const breadcrumbs = computed(() => breadcrumbsHandle(route.matched))
+
 
     return {
       leftDrawerOpen,
@@ -222,7 +211,6 @@ export default defineComponent({
         { text: 'Test new features' }
       ],
       tagViewRef,
-      breadcrumbs
     }
   }
 })
