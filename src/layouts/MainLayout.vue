@@ -10,6 +10,7 @@
         </q-btn>
 
         <q-breadcrumbs
+          v-if='$q.screen.gt.sm'
           separator='/'
           active-color="text-grey-8"
           gutter="xs"
@@ -224,7 +225,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .YL {
   &__toolbar-input-container {
-    min-width: 100px;
+    min-width: 200px;
     width: 20%;
   }
 
