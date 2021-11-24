@@ -1,39 +1,56 @@
 <template>
-  <q-item-label class="text-weight-bold text-uppercase q-item__label--header">
-    subTitle
+  <q-item-label
+    class="text-weight-bold text-uppercase q-item__label--header"
+    v-if='subtitle'
+  >
+    {{ subtitle }}
   </q-item-label>
-  <q-item v-ripple clickable @click="$router.push('/')">
-    <q-item-section avatar>
-      <q-icon color="grey" name="123" />
-    </q-item-section>
-    <q-item-section>
-      <q-item-label>123</q-item-label>
-    </q-item-section>
-  </q-item>
+
+  <template v-if='Array.isArray(item)'>
+    <q-item
+      v-ripple
+      clickable
+      v-for='(v, i) in item'
+      :key='i + v.label'
+      @click="$router.push('/')"
+    >
+      <q-item-section avatar>
+        <q-icon color="grey" :name="item.icon" />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>item.label</q-item-label>
+      </q-item-section>
+    </q-item>
+  </template>
+  <template v-else>
+    <q-item v-ripple clickable @click="$router.push('/')">
+      <q-item-section avatar>
+        <q-icon color="grey" :name="item.icon" />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>item.label</q-item-label>
+      </q-item-section>
+    </q-item>
+  </template>
 </template>
 
-<script lang='ts'>
-import { navProp } from 'src/layouts/navData'
-import { defineComponent, defineProps, onMounted } from 'vue'
+<script lang='ts' >
+import { defineComponent, PropType } from 'vue';
+import { navProp } from '../../layouts/navData';
 
-interface SlideGropProp {
-  subtitle?: string;
-  item?: navProp | navProp[]
-}
+export type SlideGropType = PropType<navProp | navProp[]>
 
-export default defineComponent({
-  name:'SlideGrop',
-  setup () {
-    const props = defineProps<SlideGropProp>()
-
-    onMounted(() => {
-       console.log(props.subtitle, props.item)
-    })
-
-    return {
-      props
-    }
-
+export default  defineComponent({
+  name: 'SlideGrop',
+  props: {
+    subtitle: String,
+    item : [Object, Array] as SlideGropType,
+  },
+  setup (props) {
+    console.log(props.item, props.subtitle)
+    return {}
   }
 })
 </script>
+
+
