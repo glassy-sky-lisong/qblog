@@ -4,31 +4,36 @@
   </q-item-label>
   <q-item v-ripple clickable @click="$router.push('/')">
     <q-item-section avatar>
-      <q-icon color="grey" :name="link0.icon" />
+      <q-icon color="grey" name="123" />
     </q-item-section>
     <q-item-section>
-      <q-item-label>{{ link0.label }}</q-item-label>
+      <q-item-label>123</q-item-label>
     </q-item-section>
   </q-item>
 </template>
 
 <script lang='ts'>
 import { navProp } from 'src/layouts/navData'
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, defineProps, onMounted } from 'vue'
 
-type SlideGropItem = PropType<navProp | navProp[]>
+interface SlideGropProp {
+  subtitle?: string;
+  item?: navProp | navProp[]
+}
 
 export default defineComponent({
   name:'SlideGrop',
-  props: {
-    subtitle: {
-      type: String,
-      required: false,
-      default: 'notfound'
-    },
-    item: {
-      type: String | Number,
+  setup () {
+    const props = defineProps<SlideGropProp>()
+
+    onMounted(() => {
+       console.log(props.subtitle, props.item)
+    })
+
+    return {
+      props
     }
+
   }
 })
 </script>

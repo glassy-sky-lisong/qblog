@@ -59,6 +59,8 @@
       <tag-view ref='tabViewRef' ></tag-view>
     </q-header>
 
+    <slide-grop subtitle='title123' :item='link0' ></slide-grop>
+
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240">
       <q-scroll-area class="fit" :thumb-style="{ 'border-radius': '5px', 'background-color': 'rgba(144, 147, 153, 0.9)', width: '3px', height: '50px', top: '0px' }" >
         <q-list padding>
@@ -171,17 +173,16 @@ import { fabYoutube } from '@quasar/extras/fontawesome-v5'
 import { nav0, nav1, nav2, nav3, nav4 } from './navData'
 import TagView from 'src/components/TagView/TagView.vue'
 import Breadcrumbs from 'src/components/Breadcrumbs/Breadcrumbs.vue'
+import SlideGrop from 'src/components/SlideGrop/SlideGrop.vue'
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   name: 'MainLayout',
-  components: { TagView, Breadcrumbs },
+  components: { TagView, Breadcrumbs, SlideGrop },
   setup() {
     const leftDrawerOpen = ref(false)
     const search = ref('')
     const tagViewRef = ref(null)
-
-
 
     return {
       leftDrawerOpen,
