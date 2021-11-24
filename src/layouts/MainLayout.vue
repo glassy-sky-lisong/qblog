@@ -16,9 +16,9 @@
           gutter="xs"
           class='q-ml-sm'
         >
-          <q-breadcrumbs-el icon="home" label='主页' />
-          <q-breadcrumbs-el label="Components" icon="widgets" />
-          <q-breadcrumbs-el label="Breadcrumbs" icon="navigation" />
+          <template v-for='(v, i) in breadcrumbs' :key='i + v.title'>
+            <q-breadcrumbs-el icon="v.icon" label='v.title' />
+          </template>
         </q-breadcrumbs>
 
         <q-space />
@@ -177,17 +177,22 @@
 import { fabYoutube } from '@quasar/extras/fontawesome-v5'
 import { nav0, nav1, nav2, nav3, nav4 } from './navData'
 import TagView from 'src/components/TagView.vue'
-import { defineComponent, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { defineComponent, ref, onUpdated, computed } from 'vue'
+import { useRouter, useRoute, RouteLocationMatched } from 'vue-router'
 
 export default defineComponent({
   name: 'MainLayout',
   components: { TagView },
   setup() {
-    const router = useRouter()
+    const route = useRoute()
     const leftDrawerOpen = ref(false)
     const search = ref('')
     const tagViewRef = ref(null)
+
+    const breadcrumbsHandle = (arrs: RouteLocationMatched[]) => {
+       return arrs.map((item) => item.meta)
+    }
+    const breadcrumbs = computed(() => breadcrumbsHandle(route.matched))
 
     return {
       leftDrawerOpen,
@@ -216,7 +221,8 @@ export default defineComponent({
         { text: 'Policy & Safety' },
         { text: 'Test new features' }
       ],
-      tagViewRef
+      tagViewRef,
+      breadcrumbs
     }
   }
 })
