@@ -31,6 +31,7 @@
             v-for="(c, n) in v.children"
             :key="c.label + n"
             class="q-pl-lg"
+            @click.stop='$emit("add-tab", c)'
             v-ripple
             clickable
           >
@@ -48,7 +49,7 @@
         v-ripple
         clickable
         v-else
-        @click="$router.push(v.to)"
+        @click="v.to !== '/' ? $emit('add-tab', v) : $router.push('/')"
       >
         <q-item-section avatar>
           <q-icon color="grey" :name="v.icon" />
@@ -65,7 +66,7 @@
 
   <template v-else>
 
-    <q-item v-ripple clickable @click="$router.push('/')">
+    <q-item v-ripple clickable @click="item.to !== '/' ? $emit('add-tab', item) : $router.push('/')">
       <q-item-section avatar>
         <q-icon color="grey" :name="item.icon" />
       </q-item-section>

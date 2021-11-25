@@ -63,13 +63,13 @@
       <q-scroll-area class="fit" :thumb-style="{ 'border-radius': '5px', 'background-color': 'rgba(144, 147, 153, 0.9)', width: '3px', height: '50px', top: '0px' }" >
 
           <slide-group>
-            <slide-item :item='links1'></slide-item>
+            <slide-item :item='links1' @add-tab='(el) => $refs.tabViewRef.addTab(el)'></slide-item>
             <q-separator class="q-my-md" />
-            <slide-item :item='links2' />
+            <slide-item :item='links2' @add-tab='(el) => $refs.tabViewRef.addTab(el)' />
             <q-separator class="q-mt-md q-mb-xs" />
-            <slide-item subtitle='More for YouTube' :item='links3' ></slide-item>
+            <slide-item subtitle='More for YouTube' :item='links3' @add-tab='(el) => $refs.tabViewRef.addTab(el)' ></slide-item>
             <q-separator class="q-my-md" />
-            <slide-item :item='links4' ></slide-item>
+            <slide-item :item='links4' @add-tab='(el) => $refs.tabViewRef.addTab(el)' ></slide-item>
           </slide-group>
 
       </q-scroll-area>

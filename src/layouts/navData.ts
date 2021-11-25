@@ -18,7 +18,7 @@ export const nav0: navProp = {
 }
 
 export const nav1: Array<navProp> = [
-  { icon: 'home', label: 'Home', to: '/' },
+  { icon: 'home', label: '主页', to: '/' },
   { icon: 'folder', label: 'Folder', children: [  { icon: 'whatshot', label: 'Trending', to: '/start/test1' }, { icon: 'subscriptions', label: 'Subscriptions', to: '/start/test2' }, { icon: 'thumb_up_alt', label: 'Liked videos', to: '/start/test3' } ] },
   { icon: 'whatshot', label: 'Trending', to: '/' },
   { icon: 'subscriptions', label: 'Subscriptions', to: '/' }
