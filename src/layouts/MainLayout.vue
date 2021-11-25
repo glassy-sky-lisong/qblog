@@ -59,104 +59,19 @@
       <tag-view ref='tabViewRef' ></tag-view>
     </q-header>
 
-    <slide-grop subtitle='title123' :item='link0' ></slide-grop>
-
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240">
       <q-scroll-area class="fit" :thumb-style="{ 'border-radius': '5px', 'background-color': 'rgba(144, 147, 153, 0.9)', width: '3px', height: '50px', top: '0px' }" >
-        <q-list padding>
-          <q-item-label class='text-weight-bold text-uppercase q-item__label--header'>
-            subTitle
-          </q-item-label>
-          <q-item v-ripple clickable @click="$router.push('/')">
-            <q-item-section avatar>
-              <q-icon color="grey" :name="link0.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link0.label }}</q-item-label>
-            </q-item-section>
-          </q-item>
 
-          <template v-for="link in links1" :key="link.label">
-            <q-expansion-item
-              v-if="link.children"
-              :icon="link.icon"
-              :label="link.label"
-              expand-separator
-            >
-              <template v-slot:header>
-                <q-item-section avatar>
-                  <q-icon color="grey" :name="link.icon" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>{{ link.label }}</q-item-label>
-                </q-item-section>
-              </template>
+          <slide-group>
+            <slide-item :item='links1'></slide-item>
+            <q-separator class="q-my-md" />
+            <slide-item :item='links2' />
+            <q-separator class="q-mt-md q-mb-xs" />
+            <slide-item subtitle='More for YouTube' :item='links3' ></slide-item>
+            <q-separator class="q-my-md" />
+            <slide-item :item='links4' ></slide-item>
+          </slide-group>
 
-              <q-list padding>
-                <q-item
-                  v-for="c in link.children"
-                  :key="c.label"
-                  class="q-pl-lg"
-                  v-ripple
-                  clickable
-                  @click='$refs.tabViewRef.addTab(c)'
-                >
-                  <q-item-section avatar>
-                    <q-icon color="grey" :name="c.icon" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ c.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-expansion-item>
-            <q-item v-else  v-ripple clickable>
-              <q-item-section avatar>
-                <q-icon color="grey" :name="link.icon" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ link.label }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </template>
-
-          <q-separator class="q-my-md" />
-
-          <q-item v-for="link in links2" :key="link.label" v-ripple clickable>
-            <q-item-section avatar>
-              <q-icon color="grey" :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.label }}</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-separator class="q-mt-md q-mb-xs" />
-
-          <q-item-label header class="text-weight-bold text-uppercase" >
-            More for YouTube
-          </q-item-label>
-
-           <q-item v-for="link in links3" :key="link.label" v-ripple clickable>
-            <q-item-section avatar>
-              <q-icon color="grey" :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.label }}</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-separator class="q-my-md" />
-
-           <q-item v-for="link in links4" :key="link.label" v-ripple clickable>
-            <q-item-section avatar>
-              <q-icon color="grey" :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.label }}</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
       </q-scroll-area>
     </q-drawer>
 
@@ -173,12 +88,13 @@ import { fabYoutube } from '@quasar/extras/fontawesome-v5'
 import { nav0, nav1, nav2, nav3, nav4 } from './navData'
 import TagView from 'src/components/TagView/TagView.vue'
 import Breadcrumbs from 'src/components/Breadcrumbs/Breadcrumbs.vue'
-import SlideGrop from 'src/components/SlideGrop/SlideGrop.vue'
+import SlideItem from 'src/components/SlideGrop/SlideItem.vue'
+import SlideGroup from 'src/components/SlideGrop/SlideGroup.vue';
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   name: 'MainLayout',
-  components: { TagView, Breadcrumbs, SlideGrop },
+  components: { TagView, Breadcrumbs, SlideItem, SlideGroup },
   setup() {
     const leftDrawerOpen = ref(false)
     const search = ref('')
