@@ -16,13 +16,51 @@
         selection="multiple"
         v-model:selected="selected"
         v-if="mode === 'multiple'"
+        ref='tableRef'
       >
-        <template v-slot:top-left>
+        <template v-slot:top='props'>
+
+          <q-btn
+            flat
+            type='a'
+            label='全选'
+            text-color="primary"
+            @click.prevent="mode = 'multiple';  selected = [ ...$refs.tableRef.rows]"
+          >
+          </q-btn>
+
+          <q-btn
+            flat
+            type='a'
+            label='删除'
+            text-color="primary"
+            @click.prevent="Array.isArray([])"
+          >
+          </q-btn>
+
+          <q-btn
+            flat
+            type='a'
+            label='取消'
+            text-color="primary"
+            @click.prevent="mode !== 'none' && ( selected = [] )"
+          >
+          </q-btn>
+
+          <q-space />
           <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
             <template v-slot:append>
               <q-icon name="search" />
             </template>
           </q-input>
+
+           <q-btn
+           flat
+           rounded
+            icon="settings"
+            size='sm'
+          >
+          </q-btn>
         </template>
       </q-table>
       <q-table
@@ -76,14 +114,20 @@ export default  defineComponent({
   name: 'AllArticle',
   setup () {
     const filter = ref('')
+    const tableRef = ref(null)
     const selected = ref([])
     const mode = ref<Mode>('none')
+    const demoHandle = (data) => {
+      console.log(data)
+    }
     return {
       columns,
       datas,
       filter,
       selected,
-      mode
+      mode,
+      demoHandle,
+      tableRef
     }
   }
 })
