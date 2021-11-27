@@ -16,7 +16,6 @@
             </template>
           </q-input>
         </template>
-        </template>
       </q-table>
     </div>
     all article

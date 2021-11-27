@@ -83,6 +83,7 @@ export const column: QColumnProp[] = [
   {
     name: 'title',
     label: '文章标题',
+    align: 'left',
     field: (row) => row.title,
     sortable: true,
     sort: defaultSortHandle
@@ -90,6 +91,7 @@ export const column: QColumnProp[] = [
   {
     name: 'author',
     label: '作者',
+    align: 'left',
     field: (row): any => row.author,
   },
   {
