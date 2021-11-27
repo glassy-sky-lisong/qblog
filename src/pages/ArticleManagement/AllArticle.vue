@@ -18,14 +18,14 @@
         v-if="mode === 'multiple'"
         ref='tableRef'
       >
-        <template v-slot:top='props'>
+        <template v-slot:top>
 
           <q-btn
             flat
             type='a'
             label='全选'
             text-color="primary"
-            @click.prevent="mode = 'multiple';  selected = [ ...$refs.tableRef.rows]"
+            @click.prevent="mode = 'multiple';  selected = [ ...$refs.tableRef.rows]; isAll = true"
           >
           </q-btn>
 
@@ -34,7 +34,8 @@
             type='a'
             label='删除'
             text-color="primary"
-            @click.prevent="Array.isArray([])"
+            v-if='isAll'
+            @click.prevent="deleteRows(selected)"
           >
           </q-btn>
 
@@ -43,7 +44,8 @@
             type='a'
             label='取消'
             text-color="primary"
-            @click.prevent="mode !== 'none' && ( selected = [] )"
+            v-if='isAll'
+            @click.prevent="mode !== 'none' && ( selected = []) && ( isAll = false ) && ( mode = 'none' )"
           >
           </q-btn>
 
@@ -72,14 +74,54 @@
         :filter='filter'
         selection="single"
         v-model:selected="selected"
-        v-if="mode === 'single'"
+        v-else-if="mode === 'single'"
+        ref='tableRef'
       >
-        <template v-slot:top-left>
+       <template v-slot:top>
+
+          <q-btn
+            flat
+            type='a'
+            label='全选'
+            text-color="primary"
+            @click.prevent="mode = 'multiple';  selected = [ ...$refs.tableRef.rows]; isAll = true"
+          >
+          </q-btn>
+
+          <q-btn
+            flat
+            type='a'
+            label='删除'
+            text-color="primary"
+            v-if='isAll'
+            @click.prevent="deleteRows(selected)"
+          >
+          </q-btn>
+
+          <q-btn
+            flat
+            type='a'
+            label='取消'
+            text-color="primary"
+            v-if='isAll'
+            @click.prevent="mode !== 'none' && ( selected = []) && ( isAll = false ) && ( mode = 'none' )"
+          >
+          </q-btn>
+
+          <q-space />
           <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
             <template v-slot:append>
               <q-icon name="search" />
             </template>
           </q-input>
+
+           <q-btn
+           flat
+           rounded
+            icon="settings"
+            size='sm'
+          >
+          </q-btn>
         </template>
       </q-table>
       <q-table
@@ -89,14 +131,54 @@
         row-key='id'
         title='全部文章'
         :filter='filter'
-        v-if="mode === 'none'"
+        v-else-if="mode === 'none'"
+        ref='tableRef'
       >
-        <template v-slot:top-left>
+       <template v-slot:top>
+
+          <q-btn
+            flat
+            type='a'
+            label='全选'
+            text-color="primary"
+            @click.prevent="mode = 'multiple';  selected = [ ...$refs.tableRef.rows]; isAll = true"
+          >
+          </q-btn>
+
+          <q-btn
+            flat
+            type='a'
+            label='删除'
+            text-color="primary"
+            v-if='isAll'
+            @click.prevent="deleteRows(selected)"
+          >
+          </q-btn>
+
+          <q-btn
+            flat
+            type='a'
+            label='取消'
+            text-color="primary"
+            v-if='isAll'
+            @click.prevent="mode !== 'none' && ( selected = []) && ( isAll = false ) && ( mode = 'none' )"
+          >
+          </q-btn>
+
+          <q-space />
           <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
             <template v-slot:append>
               <q-icon name="search" />
             </template>
           </q-input>
+
+           <q-btn
+           flat
+           rounded
+            icon="settings"
+            size='sm'
+          >
+          </q-btn>
         </template>
       </q-table>
     </div>
@@ -117,17 +199,24 @@ export default  defineComponent({
     const tableRef = ref(null)
     const selected = ref([])
     const mode = ref<Mode>('none')
-    const demoHandle = (data) => {
-      console.log(data)
+    const deleteRows = (arrs: []) => {
+      console.log('delete rows')
+      arrs.forEach(item => {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        console.log(`DELETE${item}`)
+      })
+      arrs = []
     }
+    const isAll = ref(false)
     return {
       columns,
       datas,
       filter,
       selected,
       mode,
-      demoHandle,
-      tableRef
+      tableRef,
+      deleteRows,
+      isAll
     }
   }
 })
