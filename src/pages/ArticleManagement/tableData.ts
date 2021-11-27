@@ -81,6 +81,14 @@ const defaultSortHandle = (a: any, b: any) => parseInt(a, 10) - parseInt(b, 10)
 
 export const column: QColumnProp[] = [
   {
+    name: 'id',
+    label: '#',
+    align: 'left',
+    field: (row) => row.id,
+    sortable: true,
+    sort: defaultSortHandle
+  },
+  {
     name: 'title',
     label: '文章标题',
     align: 'left',
@@ -92,7 +100,7 @@ export const column: QColumnProp[] = [
     name: 'author',
     label: '作者',
     align: 'left',
-    field: (row): any => row.author,
+    field: (row) => row.author,
   },
   {
     name: 'post_date',
