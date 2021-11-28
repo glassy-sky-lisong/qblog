@@ -32,6 +32,15 @@
           <q-btn
             flat
             type='a'
+            label='单选'
+            text-color="primary"
+            @click.prevent="mode = 'single';  selected = []; isAll = true"
+          >
+          </q-btn>
+
+          <q-btn
+            flat
+            type='a'
             label='删除'
             text-color="primary"
             v-if='isAll'
@@ -45,7 +54,7 @@
             label='取消'
             text-color="primary"
             v-if='isAll'
-            @click.prevent="mode !== 'none' && ( selected = []) && ( isAll = false ) && ( mode = 'none' )"
+            @click.prevent="mode !== 'none' && ( selected = []) && ( mode = 'none' ) && ( isAll = false )"
           >
           </q-btn>
 
@@ -91,6 +100,15 @@
           <q-btn
             flat
             type='a'
+            label='单选'
+            text-color="primary"
+            @click.prevent="mode = 'single';  selected = []; isAll = true"
+          >
+          </q-btn>
+
+          <q-btn
+            flat
+            type='a'
             label='删除'
             text-color="primary"
             v-if='isAll'
@@ -104,7 +122,7 @@
             label='取消'
             text-color="primary"
             v-if='isAll'
-            @click.prevent="mode !== 'none' && ( selected = []) && ( isAll = false ) && ( mode = 'none' )"
+            @click.prevent="mode !== 'none' && ( selected = []) && ( mode = 'none' ) && ( isAll = false )"
           >
           </q-btn>
 
@@ -148,6 +166,15 @@
           <q-btn
             flat
             type='a'
+            label='单选'
+            text-color="primary"
+            @click.prevent="mode = 'single';  selected = []; isAll = true"
+          >
+          </q-btn>
+
+          <q-btn
+            flat
+            type='a'
             label='删除'
             text-color="primary"
             v-if='isAll'
@@ -161,7 +188,7 @@
             label='取消'
             text-color="primary"
             v-if='isAll'
-            @click.prevent="mode !== 'none' && ( selected = []) && ( isAll = false ) && ( mode = 'none' )"
+            @click.prevent="mode !== 'none' && ( selected = []) && ( mode = 'none' ) && ( isAll = false )"
           >
           </q-btn>
 
@@ -180,9 +207,68 @@
           >
           </q-btn>
         </template>
+
       </q-table>
+
+      <q-menu
+          touch-position
+          context-menu
+        >
+
+          <q-list dense style="min-width: 100px">
+            <q-item clickable v-close-popup>
+              <q-item-section>Open...</q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup>
+              <q-item-section>New</q-item-section>
+            </q-item>
+            <q-separator />
+            <q-item clickable>
+              <q-item-section>Preferences</q-item-section>
+              <q-item-section side>
+                <q-icon name="keyboard_arrow_right" />
+              </q-item-section>
+
+              <q-menu anchor="top end" self="top start">
+                <q-list>
+                  <q-item
+                    v-for="n in 3"
+                    :key="n"
+                    dense
+                    clickable
+                  >
+                    <q-item-section>Submenu Label</q-item-section>
+                    <q-item-section side>
+                      <q-icon name="keyboard_arrow_right" />
+                    </q-item-section>
+                    <q-menu auto-close anchor="top end" self="top start">
+                      <q-list>
+                        <q-item
+                          v-for="n in 3"
+                          :key="n"
+                          dense
+                          clickable
+                        >
+                          <q-item-section>3rd level Label</q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-menu>
+                  </q-item>
+                </q-list>
+              </q-menu>
+
+            </q-item>
+            <q-separator />
+            <q-item clickable v-close-popup>
+              <q-item-section>Quit</q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+
     </div>
     all article
+
+    <p v-for='item in [1,2,3,4,5,6,7,8,9,10]' :key="item">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam voluptates unde, atque ratione dolores iste possimus amet, illo placeat alias temporibus molestiae magni vero voluptatem voluptatum modi, odit minus ipsa.</p>
   </q-page>
 </template>
 
