@@ -34,5 +34,13 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
     ),
   });
 
+  Router.beforeEach((to,from, next ) => {
+    console.log(to.name, to.path)
+    if(to.path !== '/login' && localStorage.getItem('login') !== 'yes') next({ path: '/login' })
+    else next()
+  })
+
   return Router;
 });
+
+

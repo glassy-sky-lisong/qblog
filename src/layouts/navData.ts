@@ -19,7 +19,7 @@ export const nav0: navProp = {
 
 export const nav1: Array<navProp> = [
   { icon: 'home', label: '主页', to: '/' },
-  { icon: 'folder', label: '文章管理', children: [  { icon: 'whatshot', label: 'Trending', to: '/article/test1' }, { icon: 'subscriptions', label: 'Subscriptions', to: '/article/test2' }, { icon: 'thumb_up_alt', label: 'Liked videos', to: '/article/test3' }, { icon: 'home', label: '全部文章', to: '/article/all' } ] },
+  { icon: 'folder', label: '文章管理', children: [  { icon: 'create', label: '添加文章', to: '/article/add' }, { icon: 'subscriptions', label: 'Subscriptions', to: '/article/test2' }, { icon: 'thumb_up_alt', label: 'Liked videos', to: '/article/test3' }, { icon: 'list_alt', label: '全部文章', to: '/article/all' } ] },
   { icon: 'whatshot', label: 'Trending', to: '/' },
   { icon: 'subscriptions', label: 'Subscriptions', to: '/' },
 ]

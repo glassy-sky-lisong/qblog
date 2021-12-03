@@ -26,7 +26,7 @@ export interface QColumnProp {
    * Horizontal alignment of cells in this column
    * Default value: right
    */
-  align?: "left" | "right" | "center";
+  align?: 'left' | 'right' | 'center';
   /**
    * Tell QTable you want this column sortable
    */
@@ -44,7 +44,7 @@ export interface QColumnProp {
    * Set column sort order: 'ad' (ascending-descending) or 'da' (descending-ascending); Overrides the 'column-sort-order' prop
    * Default value: ad
    */
-  sortOrder?: "ad" | "da";
+  sortOrder?: 'ad' | 'da';
   /**
    * Function you can apply to format your data
    */
@@ -222,6 +222,69 @@ export const data: PostProp[]  = [
   },
   {
     id: '10',
+    title: 'Vue指南',
+    author: '自己',
+    post_date: addToDate(new Date(), { days: 7, months: 1 }),
+    last_date: addToDate(new Date(), { days: 7, months: 1 }),
+    post_status: 1,
+    action: 'action',
+  },
+  {
+    id: '11',
+    title: 'Vue指南',
+    author: '自己',
+    post_date: addToDate(new Date(), { days: 7, months: 1 }),
+    last_date: addToDate(new Date(), { days: 7, months: 1 }),
+    post_status: 1,
+    action: 'action',
+  },
+  {
+    id: '12',
+    title: 'Vue指南',
+    author: '自己',
+    post_date: addToDate(new Date(), { days: 7, months: 1 }),
+    last_date: addToDate(new Date(), { days: 7, months: 1 }),
+    post_status: 1,
+    action: 'action',
+  },
+  {
+    id: '13',
+    title: 'Vue指南',
+    author: '自己',
+    post_date: addToDate(new Date(), { days: 7, months: 1 }),
+    last_date: addToDate(new Date(), { days: 7, months: 1 }),
+    post_status: 1,
+    action: 'action',
+  },
+  {
+    id: '14',
+    title: 'Vue指南',
+    author: '自己',
+    post_date: addToDate(new Date(), { days: 7, months: 1 }),
+    last_date: addToDate(new Date(), { days: 7, months: 1 }),
+    post_status: 1,
+    action: 'action',
+  },
+  {
+    id: '15',
+    title: 'Vue指南',
+    author: '自己',
+    post_date: addToDate(new Date(), { days: 7, months: 1 }),
+    last_date: addToDate(new Date(), { days: 7, months: 1 }),
+    post_status: 1,
+    action: 'action',
+  },
+  {
+    id: '16',
+    title: 'Vue指南',
+    author: '自己',
+    post_date: addToDate(new Date(), { days: 7, months: 1 }),
+    last_date: addToDate(new Date(), { days: 7, months: 1 }),
+    post_status: 1,
+    action: 'action',
+  },
+  {
+    id: '17',
     title: 'Vue指南',
     author: '自己',
     post_date: addToDate(new Date(), { days: 7, months: 1 }),

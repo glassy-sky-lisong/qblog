@@ -91,9 +91,8 @@ export default  defineComponent({
     subtitle: String,
     item : [Object, Array] as SlideItemType,
   },
-  emits: [ 'add' ],
-  setup (props) {
-    console.log(props.item, props.subtitle)
+  emits: [ 'add-tab' ],
+  setup () {
     return {}
   }
 })

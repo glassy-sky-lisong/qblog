@@ -1,9 +1,7 @@
 <template>
   <q-page padding>
-    <div class='row'>
-      <q-btn flat label='single' @click="mode = 'single'"></q-btn>
-      <q-btn flat label='multiple' @click="mode = 'multiple'"></q-btn>
-      <q-btn flat label='none' @click="mode = 'none'"></q-btn>
+    <div class='row q-mb-lg'>
+      <div class='text-h4'>全部文章</div>
     </div>
     <div class='row'>
       <q-table
@@ -13,10 +11,12 @@
         row-key='id'
         title='全部文章'
         :filter='filter'
-        selection="multiple"
+        :selection="mode"
         v-model:selected="selected"
-        v-if="mode === 'multiple'"
+        :selected-rows-label='() => selected.length > 0 ? `已选择${selected.length}项` : "" '
+        v-if="mode !== 'none'"
         ref='tableRef'
+        :visible-columns='visibleColumns'
       >
         <template v-slot:top>
 
@@ -25,7 +25,7 @@
             type='a'
             label='全选'
             text-color="primary"
-            @click.prevent="mode = 'multiple';  selected = [ ...$refs.tableRef.rows]; isAll = true"
+            @click.prevent="mode = 'multiple';  selected = [ ...$refs.tableRef.rows];"
           >
           </q-btn>
 
@@ -34,7 +34,7 @@
             type='a'
             label='单选'
             text-color="primary"
-            @click.prevent="mode = 'single';  selected = []; isAll = true"
+            @click.prevent="mode = 'single';  selected = [];"
           >
           </q-btn>
 
@@ -43,8 +43,8 @@
             type='a'
             label='删除'
             text-color="primary"
-            v-if='isAll'
-            @click.prevent="deleteRows(selected)"
+            v-if='mode !== "none"'
+            @click.prevent="deleteRows(selected); mode = 'none';"
           >
           </q-btn>
 
@@ -53,8 +53,8 @@
             type='a'
             label='取消'
             text-color="primary"
-            v-if='isAll'
-            @click.prevent="mode !== 'none' && ( selected = []) && ( mode = 'none' ) && ( isAll = false )"
+            v-if='mode !== "none"'
+            @click.prevent="mode !== 'none' && ( selected = []) && ( mode = 'none' )"
           >
           </q-btn>
 
@@ -75,16 +75,18 @@
         </template>
       </q-table>
       <q-table
-        class='full-width'
+        class='full-width table-sticky-dynamic'
         :columns='columns'
         :rows='datas'
         row-key='id'
         title='全部文章'
         :filter='filter'
-        selection="single"
-        v-model:selected="selected"
-        v-else-if="mode === 'single'"
+        v-else
         ref='tableRef'
+        :visible-columns='visibleColumns'
+        virtual-scrolls
+        :virtual-scroll-item-size='48'
+        :virtual-scroll-sticky-size-start='48'
       >
        <template v-slot:top>
 
@@ -93,7 +95,7 @@
             type='a'
             label='全选'
             text-color="primary"
-            @click.prevent="mode = 'multiple';  selected = [ ...$refs.tableRef.rows]; isAll = true"
+            @click.prevent="mode = 'multiple';  selected = [ ...$refs.tableRef.rows];"
           >
           </q-btn>
 
@@ -102,34 +104,15 @@
             type='a'
             label='单选'
             text-color="primary"
-            @click.prevent="mode = 'single';  selected = []; isAll = true"
-          >
-          </q-btn>
-
-          <q-btn
-            flat
-            type='a'
-            label='删除'
-            text-color="primary"
-            v-if='isAll'
-            @click.prevent="deleteRows(selected)"
-          >
-          </q-btn>
-
-          <q-btn
-            flat
-            type='a'
-            label='取消'
-            text-color="primary"
-            v-if='isAll'
-            @click.prevent="mode !== 'none' && ( selected = []) && ( mode = 'none' ) && ( isAll = false )"
+            @click.prevent="mode = 'single';  selected = [];"
           >
           </q-btn>
 
           <q-space />
-          <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+
+          <q-input borderless dense debounce="300" v-model="filter" placeholder="搜索">
             <template v-slot:append>
-              <q-icon name="search" />
+              <q-icon name="search" style='cursor: pointer;' />
             </template>
           </q-input>
 
@@ -139,97 +122,52 @@
             icon="settings"
             size='sm'
           >
-          </q-btn>
-        </template>
-      </q-table>
-      <q-table
-        class='full-width'
-        :columns='columns'
-        :rows='datas'
-        row-key='id'
-        title='全部文章'
-        :filter='filter'
-        v-else-if="mode === 'none'"
-        ref='tableRef'
-      >
-       <template v-slot:top>
-
-          <q-btn
-            flat
-            type='a'
-            label='全选'
-            text-color="primary"
-            @click.prevent="mode = 'multiple';  selected = [ ...$refs.tableRef.rows]; isAll = true"
-          >
-          </q-btn>
-
-          <q-btn
-            flat
-            type='a'
-            label='单选'
-            text-color="primary"
-            @click.prevent="mode = 'single';  selected = []; isAll = true"
-          >
-          </q-btn>
-
-          <q-btn
-            flat
-            type='a'
-            label='删除'
-            text-color="primary"
-            v-if='isAll'
-            @click.prevent="deleteRows(selected)"
-          >
-          </q-btn>
-
-          <q-btn
-            flat
-            type='a'
-            label='取消'
-            text-color="primary"
-            v-if='isAll'
-            @click.prevent="mode !== 'none' && ( selected = []) && ( mode = 'none' ) && ( isAll = false )"
-          >
-          </q-btn>
-
-          <q-space />
-          <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-
-           <q-btn
-           flat
-           rounded
-            icon="settings"
-            size='sm'
-          >
+             <q-menu>
+               <q-list>
+                 <q-item clickable v-ripple style='font-size: 12px;'>
+                   <q-item-section>
+                     <q-item-label>开启虚拟滚动</q-item-label>
+                   </q-item-section>
+                 </q-item>
+                 <q-item clickable v-ripple style='font-size: 12px;'>
+                   <q-item-section>
+                     <q-item-label>开启虚拟滚动</q-item-label>
+                   </q-item-section>
+                 </q-item>
+                 <q-item clickable v-ripple style='font-size: 12px;'>
+                   <q-item-section>
+                     <q-item-label>开启虚拟滚动</q-item-label>
+                   </q-item-section>
+                 </q-item>
+                 <q-item clickable v-ripple style='font-size: 12px;'>
+                   <q-item-section>
+                     <q-item-label>开启虚拟滚动</q-item-label>
+                   </q-item-section>
+                 </q-item>
+               </q-list>
+             </q-menu>
           </q-btn>
         </template>
 
       </q-table>
 
-      <!-- <context-menu></context-menu> -->
-      <q-menu touch-position context-menu >
-        <q-list dense style='min-height: 100px'>
-          <q-item clickable v-close-pop v-for='item in [1,2,3]' :key='item'>
-            <q-item-section>
-              Open...
-            <q-item-section>
-          </q-item>
-        </q-list>
-
-      </q-menu>
+       <context-menu>
+         <c-menu-item label="Open..." ></c-menu-item>
+         <c-menu-item label='Format' separator></c-menu-item>
+         <extend-menu-item icon='arrow_right' label='选择列' separator >
+           <template v-for='(c) in $refs.tableRef.columns' :key='c.id'>
+             <c-menu-item :label='c.label' :selected='visibleColumns.includes(c.name, 0)' @menu-select='!visibleColumns.includes(c.name, 0) && visibleColumns.push(c.name)' @menu-no-select='visibleColumns.indexOf(c.name, 0) !== -1 && visibleColumns.splice(visibleColumns.indexOf(c.name, 0), 1)' ></c-menu-item>
+           </template>
+         </extend-menu-item>
+       </context-menu>
     </div>
-    all article
-
-    <p v-for='item in [1,2,3,4,5,6,7,8,9,10]' :key="item">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam voluptates unde, atque ratione dolores iste possimus amet, illo placeat alias temporibus molestiae magni vero voluptatem voluptatum modi, odit minus ipsa.</p>
   </q-page>
 </template>
 
 <script lang='ts'>
-// import ContextMenu from 'src/components/ContextMenu/ContextMenu.vue'
+import ContextMenu from 'src/components/ContextMenu/ContextMenu.vue'
+import CMenuItem from 'src/components/ContextMenu/MenuItem.vue'
+import ExtendMenuItem from 'src/components/ContextMenu/ExtendMenuItem.vue'
 import { column as columns, data as datas } from './tableData'
 import { defineComponent, ref } from 'vue'
 
@@ -237,7 +175,7 @@ export type Mode = 'multiple' | 'single' | 'none'
 
 export default  defineComponent({
   name: 'AllArticle',
-  components: { },
+  components: { ContextMenu, CMenuItem, ExtendMenuItem },
   setup () {
     const filter = ref('')
     const tableRef = ref(null)
@@ -251,7 +189,13 @@ export default  defineComponent({
       })
       arrs = []
     }
+    const clickHandle = () => {
+      console.log('click callback')
+    }
     const isAll = ref(false)
+    const demoSelected = ref(false)
+
+    const visibleColumns = ref(columns.map(item => item.name).filter(item => item !== 'id'))
     return {
       columns,
       datas,
@@ -260,8 +204,31 @@ export default  defineComponent({
       mode,
       tableRef,
       deleteRows,
-      isAll
+      isAll,
+      clickHandle,
+      demoSelected,
+      visibleColumns,
     }
   }
 })
 </script>
+
+<style lang='sass'>
+.table-sticky-dynamic
+  /* height or max-height is important */
+  max-height: 410px
+  height: 100%
+
+  .q-table__top,
+  .q-table__bottom,
+  thead tr:first-child th /* bg color is important for th; just specify one */
+    background-color: #fff
+
+  thead tr th
+    position: sticky
+    z-index: 1
+  thead tr:last-child th
+   top: 48px
+  thead tr:first-child th
+    top: 0
+</style>

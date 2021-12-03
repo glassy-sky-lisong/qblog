@@ -50,6 +50,15 @@
               <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
             </q-avatar>
             <q-tooltip>Account</q-tooltip>
+            <q-menu>
+              <q-list>
+                <q-item clickable @click.once='logout'>
+                  <q-item-section>
+                    登出
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
           </q-btn>
         </div>
       </q-toolbar>
@@ -76,9 +85,11 @@
     </q-drawer>
 
     <q-page-container>
-      <keep-alive>
-        <router-view></router-view>
-      </keep-alive>
+        <router-view v-slot='{ Component }'>
+          <keep-alive>
+            <component :is='Component'></component>
+          </keep-alive>
+        </router-view>
     </q-page-container>
   </q-layout>
 </template>
@@ -92,6 +103,8 @@ import SlideItem from 'src/components/SlideGrop/SlideItem.vue'
 import SlideGroup from 'src/components/SlideGrop/SlideGroup.vue';
 import { defineComponent, ref } from 'vue'
 
+import { useRouter } from 'vue-router'
+
 export default defineComponent({
   name: 'MainLayout',
   components: { TagView, Breadcrumbs, SlideItem, SlideGroup },
@@ -99,6 +112,12 @@ export default defineComponent({
     const leftDrawerOpen = ref(false)
     const search = ref('')
     const tagViewRef = ref(null)
+    const router = useRouter()
+
+    const logout = () => {
+      localStorage.removeItem('login')
+      void router.push('/login')
+    }
 
     return {
       leftDrawerOpen,
@@ -128,6 +147,7 @@ export default defineComponent({
         { text: 'Test new features' }
       ],
       tagViewRef,
+      logout
     }
   }
 })
