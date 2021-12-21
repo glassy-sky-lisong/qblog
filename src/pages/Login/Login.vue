@@ -59,6 +59,7 @@
 <script lang='ts'>
 import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 export default  defineComponent({
   name: 'Login',
@@ -70,8 +71,11 @@ export default  defineComponent({
     const isPwd = ref(true)
     const isSubmit = ref(false)
     const router = useRouter()
+
     // components or dom ref
     const pwdRef = ref(null)
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 
     // methods
     const onSubmit = (evt: Event) => {
@@ -82,11 +86,21 @@ export default  defineComponent({
           console.log(i)
         }
         isSubmit.value = true
-        setTimeout(() => {
-          isSubmit.value = false
-          localStorage.setItem('login', 'yes')
-          void router.push('/')
-        }, 1500)
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        axios.post('http://localhost:9081/login', formData).then(
+          (res) => {
+            if (res) {
+              console.log(res)
+              isSubmit.value = false
+              localStorage.setItem('login', 'yes')
+              void router.push('/')
+            } else {
+              isSubmit.value = false
+              void router.push('/login')
+            }
+          }
+        )
+
       } else throw new Error('evt.target is null')
     }
 

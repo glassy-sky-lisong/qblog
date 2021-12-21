@@ -30,7 +30,7 @@ module.exports = configure(function (ctx) {
     // https://quasar.dev/quasar-cli/boot-files
     boot: [
       'i18n',
-      'axios',
+      // 'axios',
       'md-editor'
     ],
 
@@ -84,8 +84,18 @@ module.exports = configure(function (ctx) {
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
       https: false,
-      port: 8080,
-      open: false // opens browser window automatically
+      port: 3000,
+      open: false, // opens browser window automatically,
+      proxy: {
+        '/': {
+          target: 'http://localhost:9081',
+          changeOrigin: true,
+        },
+        '/login': {
+          target: 'http://localhost:9081',
+          changeOrigin: true,
+        }
+      }
     },
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
