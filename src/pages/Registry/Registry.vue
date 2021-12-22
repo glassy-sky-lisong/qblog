@@ -10,7 +10,7 @@
             v-model='username'
             name='username'
             label='用户名'
-            :rules='[ val => !!val || "用户名不能为空", val => true || "用户名不可以带有特殊字符" ]'
+            :rules='[ val => !!val || "用户名不能为空", val => !haveSpecialCharacter(val) || "用户名不可以带有特殊字符" ]'
           ></q-input>
         </q-card-section>
         <q-card-section class='row'>
@@ -24,8 +24,8 @@
             filled
             v-model="birthday"
             name='birthday'
-            style='width: 50%'
-            :rules='[ val => !!val || "日期不能为空", val => val === "请选择日期" || "请点击此按钮选择日期" ]'
+            style='width: 50%;'
+            :rules='[ val => !!val || "日期不能为空", val => val !== "请选择日期" || "请点击此按钮选择日期" ]'
           >
             <template v-slot:append>
               <q-icon name="event" class="cursor-pointer">
@@ -100,8 +100,6 @@ export default defineComponent({
 
     //vars
     const { haveSpecialCharacter } = validation
-
-    console.log(haveSpecialCharacter('~target'))
 
     //methods
     const onSubmit = (evt: Event) => {
