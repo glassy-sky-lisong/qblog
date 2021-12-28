@@ -25,12 +25,14 @@
             v-model="birthday"
             name='birthday'
             style='width: 50%;'
-            :rules='[ val => !!val || "日期不能为空", val => val !== "请选择日期" || "请点击此按钮选择日期" ]'
+            mask='####-##-##'
+            :rules='[ val => !!val || "请选择日期", val => isbirthday(val) || "非法的日期格式" ]'
+            aria-placeholder='请选择日期'
           >
             <template v-slot:append>
               <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy transition-show="scale" transition-hide="scale">
-                  <q-date v-model="birthday" mask="YYYY-MM-DD" v-close-popup>
+                <q-popup-proxy transition-show="scale" transition-hide="scale"  v-close-popup>
+                  <q-date v-model="birthday" mask="YYYY-MM-DD" >
                     <div class="row items-center justify-end">
                       <q-btn label="获取当前日期" color="primary" flat @click='getCurrentDate' />
                     </div>
@@ -41,20 +43,47 @@
           </q-input>
         </q-card-section>
         <q-card-section>
-          <q-input v-model='email' name='email' label='电子邮箱'></q-input>
+          <q-input
+            v-model='email'
+            name='email'
+            label='电子邮箱'
+            :rules='[val => !!val || "邮箱不能为空", val => isEmail(val) || "非法的邮箱格式"]'
+          ></q-input>
         </q-card-section>
         <q-card-section>
           <q-input
+            :type='pwdVisibility ? "text" : "password"'
             v-model='password'
             name='password'
             label='密码'
-          ></q-input>
+            :rules='[ val => !!val || "密码不可以是空值", val => validPassword(val) || "密码长度8-18，包括字母、数字，字母区分大小写", ]'
+            aria-placeholder='密码长度8-18，包括字母、数字，字母区分大小写'
+          >
+            <template v-slot:append>
+              <q-icon
+                @click='pwdVisibility = !pwdVisibility'
+                :name='pwdVisibility ? "visibility" : "visibility_off"'
+                style='cursor: pointer'
+              ></q-icon>
+            </template>
+          </q-input>
         </q-card-section>
         <q-card-section>
           <q-input
+            :type='repwdVisibility ? "text" : "password"'
             v-model='repassword'
             label='确认密码'
-          ></q-input>
+            :rules='[ val => !!val || "你还没有确认密码", val => (!!password && val === password) || "密码与二次确认不一致" ]'
+            aria-placeholder='请再输入一遍密码'
+          >
+            <template v-slot:append>
+              <q-icon
+                @click='repwdVisibility = !repwdVisibility'
+                :name='repwdVisibility ? "visibility" : "visibility_off"'
+                style='cursor: pointer;'
+              ></q-icon>
+            </template>
+          </q-input>
         </q-card-section>
         <q-card-section style='display: none;'>
           <q-input model-value='user' name='role' label='用户权限'></q-input>
@@ -82,6 +111,7 @@
 
 <script lang='ts'>
 import { defineComponent, ref } from 'vue';
+import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import validation from 'src/utils/validation'
 
@@ -93,13 +123,16 @@ export default defineComponent({
     const password = ref('');
     const repassword = ref('');
     const gender = ref('0');
-    const birthday = ref('请选择日期');
+    const birthday = ref('2000-01-01');
     const email = ref('');
     const visible = ref(false);
+    const pwdVisibility = ref(false);
+    const repwdVisibility = ref(false);
     const $q = useQuasar();
+    const router = useRouter();
 
     //vars
-    const { haveSpecialCharacter } = validation
+    const { haveSpecialCharacter, isbirthday, isEmail, validPassword } = validation
 
     //methods
     const onSubmit = (evt: Event) => {
@@ -112,11 +145,16 @@ export default defineComponent({
         visible.value = true
         setTimeout(() => {
           visible.value = false;
-          $q.notify({
+          const n1 = $q.notify({
             message: '注册成功',
             position: 'center',
-            color: 'primary'
+            color: 'primary',
           })
+
+          setTimeout(() => {
+            n1();
+            void router.push('/login');
+          }, 500)
         }, 3000)
 
       } else {
@@ -127,7 +165,7 @@ export default defineComponent({
     const getCurrentDate = () => {
       console.log('123')
     }
-    return { username, password, repassword, gender, birthday, email, visible, onSubmit, getCurrentDate, haveSpecialCharacter };
+    return { username, password, repassword, gender, birthday, email, visible, onSubmit, getCurrentDate, haveSpecialCharacter, isbirthday, isEmail, pwdVisibility, repwdVisibility, validPassword };
   }
 })
 </script>

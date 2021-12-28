@@ -7,6 +7,7 @@ import {
 } from 'vue-router';
 import { StateInterface } from '../store';
 import routes from './routes';
+import { SessionStorage, Cookies } from 'quasar';
 
 /*
  * If not building with SSR mode, you can
@@ -17,7 +18,8 @@ import routes from './routes';
  * with the Router instance.
  */
 
-export default route<StateInterface>(function (/* { store, ssrContext } */) {
+
+export default route<StateInterface>(function ( {/*store, ssrContext */ } ) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory);
@@ -35,9 +37,13 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
   });
 
   Router.beforeEach((to,from, next ) => {
-    console.log(to.name, to.path)
-    if(to.path !== '/login' && localStorage.getItem('login') !== 'yes') next({ path: '/login' })
-    else next()
+    if (to.name === 'Login' || to.name === 'Registry') {
+      next()
+    } else if( Cookies.has('loginer') || SessionStorage.has('loginer')) {
+      next();
+    } else {
+      next('/login');
+    }
   })
 
   return Router;

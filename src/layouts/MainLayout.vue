@@ -101,8 +101,9 @@ import TagView from 'src/components/TagView/TagView.vue'
 import Breadcrumbs from 'src/components/Breadcrumbs/Breadcrumbs.vue'
 import SlideItem from 'src/components/SlideGrop/SlideItem.vue'
 import SlideGroup from 'src/components/SlideGrop/SlideGroup.vue';
-import { defineComponent, ref } from 'vue'
-
+import { useStore } from 'src/store/index'
+import { defineComponent, ref, onMounted } from 'vue'
+import { date, useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
@@ -113,11 +114,25 @@ export default defineComponent({
     const search = ref('')
     const tagViewRef = ref(null)
     const router = useRouter()
+    const $q = useQuasar()
+    const SessionStorage = $q.sessionStorage
+    const Cookies = $q.cookies
+    const store = useStore()
+
+    const { formatDate } = date
 
     const logout = () => {
-      localStorage.removeItem('login')
+      Cookies.has('loginer') && Cookies.remove('loginer')
+      SessionStorage.has('loginer') && SessionStorage.has('loginer')
+      store.commit('clearCurrentUser');
       void router.push('/login')
     }
+
+    onMounted(() => {
+      const currentUser = store.getters.currentUser;
+
+      console.log('date', formatDate(currentUser.birthday, 'YYYY-MM-DD'))
+    })
 
     return {
       leftDrawerOpen,

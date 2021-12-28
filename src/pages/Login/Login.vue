@@ -45,8 +45,8 @@
                 </q-input>
               </q-card-section>
               <q-card-section style='flex-direction: row;'>
-                <q-checkbox v-model='remeber' label='记住密码' color='cyan' :disable='isSubmit ? true : false'  />
-                <q-btn dense type='a' flat text-color='primary' size='xs' label='没账号，点击注册!'></q-btn>
+                <q-checkbox v-model='remember' name='remember-me' label='记住密码' color='cyan' :disable='isSubmit ? true : false'  />
+                <q-btn dense type='a' to='/registry' flat text-color='primary' size='xs' label='没账号，点击注册!'></q-btn>
               </q-card-section>
               <q-card-section class='row justify-around'>
                 <q-btn type='submit' label='登录' :loading='isSubmit ? true : false' ></q-btn>
@@ -59,6 +59,8 @@
 <script lang='ts'>
 import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router'
+import { UserProps, useStore } from 'src/store/index'
+import { date, useQuasar } from 'quasar';
 import axios from 'axios'
 
 export default  defineComponent({
@@ -67,10 +69,15 @@ export default  defineComponent({
     // reference ref
     const username = ref('')
     const password = ref('')
-    const remeber = ref(false)
+    const remember = ref(false)
     const isPwd = ref(true)
     const isSubmit = ref(false)
     const router = useRouter()
+    const store = useStore()
+    const $q = useQuasar()
+    const Cookies = $q.cookies
+    const SessionStorage = $q.sessionStorage
+    const { formatDate } = date
 
     // components or dom ref
     const pwdRef = ref(null)
@@ -81,30 +88,61 @@ export default  defineComponent({
     const onSubmit = (evt: Event) => {
       if (evt.target) {
         const formData = new FormData(evt.target as HTMLFormElement)
-
+        formData.set('remember-me', remember.value ? '1' : '0');
         for (let i of formData.entries()) {
           console.log(i)
         }
+
         isSubmit.value = true
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         axios.post('http://localhost:9081/login', formData).then(
           (res) => {
-            if (res) {
-              console.log(res)
+            if (res.data) {
+              console.log(res.data)
+              const newUser: UserProps = {
+                id: res.data.id ? res.data.id : -1,
+                username: res.data.username,
+                password: res.data.password ? res.data.password : '',
+                gender: res.data.gender ? res.data.gender : 0,
+                birthday: res.data.birthday ? formatDate(res.data.birthday, 'YYYY-MM-DD') : '1999-01-01',
+                email: res.data.email ? res.data.email : '',
+                enabled: res.data.enabled ? res.data.enabled : false,
+                accountNonLocked: res.data.accountNonLocked ? res.data.accountNonLocked : false,
+                accountNonExpired: res.data.accountNonExpired ? res.data.accountNonExpired : false,
+                credentialsNonExpired: res.data.credentialsNonExpired ? res.data.credentialsNonExpired : false,
+                authorities: res.data.authorities ? res.data.authorities : [],
+                role: res.data.role ? res.data.role : '',
+                roleId: res.data.roleId ? res.data.roleId : 0,
+                avatar: res.data.avatar ? res.data.avatar : 'https://cdn.quasar.dev/img/boy-avatar.png',
+                roleLabel: res.data.roleLabel ? res.data.roleLabel : '游客'
+              }
+              store.commit('setCurrentUser', newUser);
+
+
+              if (remember.value) {
+                console.log('remember-true')
+                !Cookies.has('loginer') && Cookies.set('loginer', 'true',{
+                  expires: '3d',
+                  httpOnly: false
+                })
+              } else {
+                !SessionStorage.has('loginer') && SessionStorage.set('loginer', 'true');
+              }
+
               isSubmit.value = false
-              localStorage.setItem('login', 'yes')
               void router.push('/')
             } else {
-              isSubmit.value = false
-              void router.push('/login')
+              isSubmit.value = false;
             }
           }
-        )
+        ).catch(err => {
+          console.log(err);
+        })
 
       } else throw new Error('evt.target is null')
     }
 
-    return { username, password, remeber, isPwd, pwdRef, onSubmit, isSubmit }
+    return { username, password, remember, isPwd, pwdRef, onSubmit, isSubmit }
   }
 })
 </script>
