@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh lpR fFf" class="bg-grey-1">
+  <q-layout view="hHh lpR fFf" class="bg-grey-1 main-layout">
     <q-header elevated class="bg-white text-grey-8 q-py-xs">
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
@@ -52,6 +52,11 @@
             <q-tooltip>Account</q-tooltip>
             <q-menu>
               <q-list>
+                <q-item clickable  >
+                  <q-item-section @click='settings = true'>
+                    设置
+                  </q-item-section>
+                </q-item>
                 <q-item clickable @click.once='logout'>
                   <q-item-section>
                     登出
@@ -91,6 +96,41 @@
           </keep-alive>
         </router-view>
     </q-page-container>
+
+    <pop-card
+      title='我是标题'
+      v-model='settings'
+      @save='close => close()'
+    >
+      <simple-list>
+        <simple-item
+          caption-label='基本信息'
+          left-label='头像'
+          btn-label='上传'
+          btn-class='q-my-auto'
+          :btn-style='{ height: "1rem" }'
+        >
+          <q-avatar sizes='lg' style='width: 4rem; height: 4rem;flex: 1;'>
+            <q-img width='4rem' height='4rem' src='https://cdn.quasar.dev/img/boy-avatar.png' sizes='lg'></q-img>
+          </q-avatar>
+        </simple-item>
+        <simple-item left-label='用户名'>
+          {{ currentUser.username }}}
+        </simple-item>
+        <simple-item left-label='密码' btn-label='修改' @btn-click='onBtnClick'>
+          balbalbalba
+        </simple-item>
+        <simple-item left-label='性别'>
+          男
+        </simple-item>
+        <simple-item left-label='生日'>
+          2021-10-10
+        </simple-item>
+        <simple-item left-label='电子邮箱' btn-label='修改'>
+          1990691103@qq.com
+        </simple-item>
+      </simple-list>
+    </pop-card>
   </q-layout>
 </template>
 
@@ -101,14 +141,17 @@ import TagView from 'src/components/TagView/TagView.vue'
 import Breadcrumbs from 'src/components/Breadcrumbs/Breadcrumbs.vue'
 import SlideItem from 'src/components/SlideGrop/SlideItem.vue'
 import SlideGroup from 'src/components/SlideGrop/SlideGroup.vue';
+import PopCard from 'src/components/PopCard/PopCard.vue';
+import SimpleList from 'src/components/simepleList/simpleList.vue';
+import SimpleItem from 'src/components/simepleList/simpleItem.vue';
 import { useStore } from 'src/store/index'
-import { defineComponent, ref, onMounted } from 'vue'
-import { date, useQuasar } from 'quasar'
+import { defineComponent, ref, onMounted, computed } from 'vue'
+import { date, useQuasar } from 'quasar';
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'MainLayout',
-  components: { TagView, Breadcrumbs, SlideItem, SlideGroup },
+  components: { TagView, Breadcrumbs, SlideItem, SlideGroup, PopCard, SimpleList, SimpleItem },
   setup() {
     const leftDrawerOpen = ref(false)
     const search = ref('')
@@ -118,7 +161,10 @@ export default defineComponent({
     const SessionStorage = $q.sessionStorage
     const Cookies = $q.cookies
     const store = useStore()
+    const settings = ref(false)
+    const currentUser = computed(() => store.getters.currentUser)
 
+    // refs
     const { formatDate } = date
 
     const logout = () => {
@@ -128,11 +174,14 @@ export default defineComponent({
       void router.push('/login')
     }
 
-    onMounted(() => {
-      const currentUser = store.getters.currentUser;
+    const onBtnClick = () => {
+      console.log('btn-click')
+    }
 
-      console.log('date', formatDate(currentUser.birthday, 'YYYY-MM-DD'))
-    })
+    // onMounted(() => {
+    //
+    //   console.log('date', formatDate(currentUser.birthday, 'YYYY-MM-DD'))
+    // })
 
     return {
       leftDrawerOpen,
@@ -162,7 +211,10 @@ export default defineComponent({
         { text: 'Test new features' }
       ],
       tagViewRef,
-      logout
+      logout,
+      settings,
+      onBtnClick,
+      currentUser
     }
   }
 })

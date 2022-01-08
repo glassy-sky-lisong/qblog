@@ -55,7 +55,7 @@ export const storeKey: InjectionKey<VuexStore<StateInterface>> = Symbol('vuex-ke
 
 const defaultUser: UserProps = {
   id: -1,
-  username: '',
+  username: '游客',
   password: '',
   gender: -1,
   birthday: '1999-01-01',
