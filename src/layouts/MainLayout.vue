@@ -111,23 +111,23 @@
           :btn-style='{ height: "1rem" }'
         >
           <q-avatar sizes='lg' style='width: 4rem; height: 4rem;flex: 1;'>
-            <q-img width='4rem' height='4rem' src='https://cdn.quasar.dev/img/boy-avatar.png' sizes='lg'></q-img>
+            <q-img width='4rem' height='4rem' :src='currentUser.avatar' sizes='lg'></q-img>
           </q-avatar>
         </simple-item>
         <simple-item left-label='用户名'>
-          {{ currentUser.username }}}
+          {{ currentUser.username }}
         </simple-item>
         <simple-item left-label='密码' btn-label='修改' @btn-click='onBtnClick'>
-          balbalbalba
+          {{ currentUser.password }}
         </simple-item>
         <simple-item left-label='性别'>
-          男
+          {{ currentUser.gender }}
         </simple-item>
         <simple-item left-label='生日'>
-          2021-10-10
+          {{ currentUser.birthday }}
         </simple-item>
         <simple-item left-label='电子邮箱' btn-label='修改'>
-          1990691103@qq.com
+          {{ currentUser.email }}
         </simple-item>
       </simple-list>
     </pop-card>
@@ -144,10 +144,11 @@ import SlideGroup from 'src/components/SlideGrop/SlideGroup.vue';
 import PopCard from 'src/components/PopCard/PopCard.vue';
 import SimpleList from 'src/components/simepleList/simpleList.vue';
 import SimpleItem from 'src/components/simepleList/simpleItem.vue';
-import { useStore } from 'src/store/index'
-import { defineComponent, ref, onMounted, computed } from 'vue'
+import { UserProps, useStore } from 'src/store/index';
+import { defineComponent, ref, onMounted, computed, onUpdated } from 'vue'
 import { date, useQuasar } from 'quasar';
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -158,30 +159,48 @@ export default defineComponent({
     const tagViewRef = ref(null)
     const router = useRouter()
     const $q = useQuasar()
-    const SessionStorage = $q.sessionStorage
-    const Cookies = $q.cookies
     const store = useStore()
     const settings = ref(false)
     const currentUser = computed(() => store.getters.currentUser)
 
-    // refs
-    const { formatDate } = date
 
     const logout = () => {
-      Cookies.has('loginer') && Cookies.remove('loginer')
-      SessionStorage.has('loginer') && SessionStorage.has('loginer')
-      store.commit('clearCurrentUser');
-      void router.push('/login')
+      void store.dispatch('logout').then(
+        res => {
+          if (res) {
+            void router.push('/login')
+          } else {
+            console.log('logout unknown error')
+          }
+        }
+      ).catch(err => console.error(err))
     }
 
     const onBtnClick = () => {
       console.log('btn-click')
     }
 
-    // onMounted(() => {
-    //
-    //   console.log('date', formatDate(currentUser.birthday, 'YYYY-MM-DD'))
-    // })
+    const getLoginedUser = () => {
+      void axios.get('/api/user/current-user').then(
+        res => {
+          console.log(res.data)
+          if (res.data.data) {
+            store.commit('setUser', res.data.data)
+          } else throw new Error('get LoginUser fail')
+        }
+      ).catch(err => console.error(err))
+    }
+
+    onMounted(() => {
+      console.log('mounted')
+      // getLoginedUser()
+      void store.dispatch('fetchCurrentUser')
+    })
+
+    onUpdated(() => console.log('updated'))
+
+
+
 
     return {
       leftDrawerOpen,

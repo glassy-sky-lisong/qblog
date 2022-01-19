@@ -57,11 +57,10 @@
 </template>
 
 <script lang='ts'>
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router'
-import { UserProps, useStore } from 'src/store/index'
-import { date, useQuasar } from 'quasar';
-import axios from 'axios'
+import { useStore, isLogin, isdefaultUser } from 'src/store'
+import { useQuasar } from 'quasar';
 
 export default  defineComponent({
   name: 'Login',
@@ -75,9 +74,6 @@ export default  defineComponent({
     const router = useRouter()
     const store = useStore()
     const $q = useQuasar()
-    const Cookies = $q.cookies
-    const SessionStorage = $q.sessionStorage
-    const { formatDate } = date
 
     // components or dom ref
     const pwdRef = ref(null)
@@ -89,58 +85,52 @@ export default  defineComponent({
       if (evt.target) {
         const formData = new FormData(evt.target as HTMLFormElement)
         formData.set('remember-me', remember.value ? '1' : '0');
-        for (let i of formData.entries()) {
-          console.log(i)
-        }
-
+        // for (let i of formData.entries()) {
+        //   console.log(i)
+        // }
         isSubmit.value = true
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        axios.post('http://localhost:9081/login', formData).then(
-          (res) => {
-            if (res.data) {
-              console.log(res.data)
-              const newUser: UserProps = {
-                id: res.data.id ? res.data.id : -1,
-                username: res.data.username,
-                password: res.data.password ? res.data.password : '',
-                gender: res.data.gender ? res.data.gender : 0,
-                birthday: res.data.birthday ? formatDate(res.data.birthday, 'YYYY-MM-DD') : '1999-01-01',
-                email: res.data.email ? res.data.email : '',
-                enabled: res.data.enabled ? res.data.enabled : false,
-                accountNonLocked: res.data.accountNonLocked ? res.data.accountNonLocked : false,
-                accountNonExpired: res.data.accountNonExpired ? res.data.accountNonExpired : false,
-                credentialsNonExpired: res.data.credentialsNonExpired ? res.data.credentialsNonExpired : false,
-                authorities: res.data.authorities ? res.data.authorities : [],
-                role: res.data.role ? res.data.role : '',
-                roleId: res.data.roleId ? res.data.roleId : 0,
-                avatar: res.data.avatar ? res.data.avatar : 'https://cdn.quasar.dev/img/boy-avatar.png',
-                roleLabel: res.data.roleLabel ? res.data.roleLabel : '游客'
-              }
-              store.commit('setCurrentUser', newUser);
-
-
-              if (remember.value) {
-                console.log('remember-true')
-                !Cookies.has('loginer') && Cookies.set('loginer', 'true',{
-                  expires: '3d',
-                  httpOnly: false
-                })
-              } else {
-                !SessionStorage.has('loginer') && SessionStorage.set('loginer', 'true');
-              }
-
-              isSubmit.value = false
-              void router.push('/')
-            } else {
+        store.dispatch('login', formData).then(
+          res => {
+            if (res) {
+              const notify = $q.notify({
+                type: 'info',
+                message: '登陆成功'
+              })
               isSubmit.value = false;
+              setTimeout(() => {
+                notify()
+                void router.push('/')
+              }, 1500)
+            } else {
+              const notify = $q.notify({
+                type: 'warn',
+                message: '登陆失败'
+              })
+              setTimeout(() => {
+                notify()
+                void router.push('/login')
+              }, 1500)
             }
           }
-        ).catch(err => {
-          console.log(err);
+       ).catch(err => {
+         console.error(err)
         })
-
-      } else throw new Error('evt.target is null')
+      }
     }
+
+    const autoLogin = () => {
+      if(isLogin(store.state)) {
+        const notify = $q.notify({
+          type: 'primary',
+          message: '检测到登录状态，自动登录中...'
+        })
+        setTimeout(() => { notify(); void router.push('/') }, 1500);
+      }
+    }
+
+    onMounted(() => {
+      autoLogin();
+    })
 
     return { username, password, remember, isPwd, pwdRef, onSubmit, isSubmit }
   }

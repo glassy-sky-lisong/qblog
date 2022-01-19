@@ -1,13 +1,14 @@
+
 import { route } from 'quasar/wrappers';
 import {
   createMemoryHistory,
   createRouter,
   createWebHashHistory,
   createWebHistory,
+  Router
 } from 'vue-router';
-import { StateInterface } from '../store';
+import { StateInterface, isLogin } from '../store';
 import routes from './routes';
-import { SessionStorage, Cookies } from 'quasar';
 
 /*
  * If not building with SSR mode, you can
@@ -18,13 +19,14 @@ import { SessionStorage, Cookies } from 'quasar';
  * with the Router instance.
  */
 
+export let router: Router
 
-export default route<StateInterface>(function ( {/*store, ssrContext */ } ) {
+export default route<StateInterface>(function ( {store/*, ssrContext */ } ) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory);
 
-  const Router = createRouter({
+ const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
     routes,
 
@@ -36,17 +38,24 @@ export default route<StateInterface>(function ( {/*store, ssrContext */ } ) {
     ),
   });
 
+ router = Router
+
   Router.beforeEach((to,from, next ) => {
     if (to.name === 'Login' || to.name === 'Registry') {
-      next()
-    } else if( Cookies.has('loginer') || SessionStorage.has('loginer')) {
+
+        next()
+
+    } else if(isLogin(store.state)) {
+
       next();
+
     } else {
+
       next('/login');
+
     }
   })
 
   return Router;
 });
-
 

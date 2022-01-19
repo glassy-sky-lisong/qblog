@@ -87,13 +87,10 @@ module.exports = configure(function (ctx) {
       port: 3000,
       open: false, // opens browser window automatically,
       proxy: {
-        '/': {
+        '/api': {
           target: 'http://localhost:9081',
           changeOrigin: true,
-        },
-        '/login': {
-          target: 'http://localhost:9081',
-          changeOrigin: true,
+          pathRewrite: { '^/api': ''}
         }
       }
     },
