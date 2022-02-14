@@ -5,7 +5,7 @@
     </div>
     <div class='row'>
       <q-table
-        class='full-width'
+        class='full-width table-sticky-dynamic'
         :columns='columns'
         :rows='datas'
         row-key='id'
@@ -17,6 +17,7 @@
         v-if="mode !== 'none'"
         ref='tableRef'
         :visible-columns='visibleColumns'
+        :loading='tableLoading'
       >
         <template v-slot:top>
 
@@ -25,7 +26,7 @@
             type='a'
             label='全选'
             text-color="primary"
-            @click.prevent="mode = 'multiple';  selected = [ ...$refs.tableRef.rows];"
+            @click.prevent="mode = 'multiple';  selected = [ ...$refs.tableRef.rows]; "
           >
           </q-btn>
 
@@ -44,7 +45,7 @@
             label='删除'
             text-color="primary"
             v-if='mode !== "none"'
-            @click.prevent="deleteRows(selected); mode = 'none';"
+            @click.prevent="deleteRows(selected);"
           >
           </q-btn>
 
@@ -59,7 +60,7 @@
           </q-btn>
 
           <q-space />
-          <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+          <q-input dense debounce="300" v-model="filter" placeholder="Search">
             <template v-slot:append>
               <q-icon name="search" />
             </template>
@@ -72,6 +73,10 @@
             size='sm'
           >
           </q-btn>
+        </template>
+
+        <template v-slot:loading>
+          <q-inner-loading :showing='tableLoading' color='primary' :label='tableLoadingLabel'></q-inner-loading>
         </template>
       </q-table>
       <q-table
@@ -87,6 +92,9 @@
         virtual-scrolls
         :virtual-scroll-item-size='48'
         :virtual-scroll-sticky-size-start='48'
+        :loading='tableLoading'
+        rows-per-page-label='每页显示行数'
+        :pagination-label='(firstRowIndex, endRowIndex, totalNumers) => `共${totalNumers}条记录`'
       >
        <template v-slot:top>
 
@@ -149,6 +157,13 @@
           </q-btn>
         </template>
 
+        <template v-slot:loading>
+          <q-inner-loading :showing='tableLoading' color='primary' :label='tableLoadingLabel'></q-inner-loading>
+        </template>
+
+        <template v-slot:pagination='scopes'>
+          <q-pagination :max='scopes.pagesNumber' v-model='scopes.pagination.page' input></q-pagination>
+        </template>
       </q-table>
 
        <context-menu>
@@ -168,8 +183,10 @@
 import ContextMenu from 'src/components/ContextMenu/ContextMenu.vue'
 import CMenuItem from 'src/components/ContextMenu/MenuItem.vue'
 import ExtendMenuItem from 'src/components/ContextMenu/ExtendMenuItem.vue'
-import { column as columns, data as datas } from './tableData'
-import { defineComponent, ref } from 'vue'
+import { column as columns, PostProp } from './tableData'
+import { defineComponent, ref, onMounted } from 'vue'
+import { useStore } from 'src/store'
+import { evaArrowCircleRight } from '@quasar/extras/eva-icons';
 
 export type Mode = 'multiple' | 'single' | 'none'
 
@@ -180,15 +197,61 @@ export default  defineComponent({
     const filter = ref('')
     const tableRef = ref(null)
     const selected = ref([])
+    const tableLoading = ref(false)
+    const tableLoadingLabel = ref('')
     const mode = ref<Mode>('none')
-    const deleteRows = (arrs: []) => {
-      console.log('delete rows')
-      arrs.forEach(item => {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        console.log(`DELETE${item}`)
-      })
-      arrs = []
+    const store = useStore()
+
+    const setLoading = (msg: string) => {
+      tableLoading.value = true
+      tableLoadingLabel.value = msg
     }
+
+    const clearLoading = () => {
+      tableLoading.value = false
+      tableLoadingLabel.value = ''
+    }
+
+    const deleteRows = (arrs: any[]) => {
+      console.log('delete rows')
+      const deleteFiles = arrs.map(item => {
+        return item.articleName || ''
+      })
+      console.log(deleteFiles)
+      // todo
+      setLoading('正在删除')
+      store.dispatch('deleteArticleByNames', deleteFiles).then(
+        res => {
+          //  delete
+          datas.value = []
+
+          // 拉取数据
+          setLoading('正在拉取数据')
+          fetchAllArticle().then(res => {
+            clearLoading()
+          }).catch(err => console.error(err))
+        }
+      ).catch((err) => { console.error(err); arrs = arrs; clearLoading();})
+      .finally(() => mode.value = 'none')
+    }
+
+    const fetchAllArticle = () => {
+      return new Promise((resolve, reject) => {
+        void store.dispatch('fetchAllArticle').then(
+          res => {
+            if (Array.isArray(res)) {
+              console.log(res)
+              res.forEach((item) => {
+                datas.value.push(item)
+              })
+              console.log(datas.value)
+              resolve(true)
+            }
+          }
+        ).catch(err => reject(err))
+      })
+    }
+
     const clickHandle = () => {
       console.log('click callback')
     }
@@ -196,6 +259,28 @@ export default  defineComponent({
     const demoSelected = ref(false)
 
     const visibleColumns = ref(columns.map(item => item.name).filter(item => item !== 'id'))
+    const datas = ref< PostProp[] >([])
+
+    const initArticleList = () => {
+      setLoading('正在初始化')
+      void store.dispatch('fetchAllArticle').then(
+        res => {
+          if (Array.isArray(res)) {
+            console.log(res)
+            res.forEach((item) => {
+              datas.value.push(item)
+            })
+            console.log(datas.value)
+          }
+          clearLoading()
+        }
+      ).catch(err => { console.error(err); clearLoading() })
+    }
+
+    onMounted(() =>[
+      initArticleList()
+    ])
+
     return {
       columns,
       datas,
@@ -208,6 +293,8 @@ export default  defineComponent({
       clickHandle,
       demoSelected,
       visibleColumns,
+      tableLoading,
+      tableLoadingLabel,
     }
   }
 })
@@ -217,7 +304,8 @@ export default  defineComponent({
 .table-sticky-dynamic
   /* height or max-height is important */
   max-height: 410px
-  height: 100%
+  min-height: 300px
+  height: 410px
 
   .q-table__top,
   .q-table__bottom,

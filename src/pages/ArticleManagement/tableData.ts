@@ -1,5 +1,6 @@
 import { LooseDictionary } from 'quasar/dist/types/ts-helpers';
 import { date } from 'quasar';
+import { ABoforeB } from 'src/utils/date'
 
 const { addToDate, formatDate } = date
 
@@ -68,13 +69,16 @@ export interface QColumnProp {
 }
 
 export interface PostProp {
-  id: string;
-  title: string;
-  author: string;
-  post_date: string | Date | number;
-  last_date: string | Date | number;
-  post_status: PostStatus;
-  action: string;
+  articleName: string;
+  articleStatus: number;
+  authorId: number;
+  authorName: string;
+  category: string;
+  content: string;
+  creteTime: string | Date | number;
+  lastTime: string | Date | number;
+  description: string;
+  id: number;
 }
 
 const defaultSortHandle = (a: any, b: any) => parseInt(a, 10) - parseInt(b, 10)
@@ -92,7 +96,7 @@ export const column: QColumnProp[] = [
     name: 'title',
     label: '文章标题',
     align: 'left',
-    field: (row) => row.title,
+    field: (row) => row.articleName,
     sortable: true,
     sort: defaultSortHandle
   },
@@ -100,7 +104,14 @@ export const column: QColumnProp[] = [
     name: 'author',
     label: '作者',
     align: 'left',
-    field: (row) => row.author,
+    field: (row) => row.authorName,
+  },
+  {
+    name: 'category',
+    label: '分类',
+    align: 'left',
+    field: (row) => row.category,
+    format: val => (val as string).replace(',', '、')
   },
   {
     name: 'post_date',
@@ -108,9 +119,10 @@ export const column: QColumnProp[] = [
     align: 'left',
     field: row => row.post_date,
     format: (val, row) => {
-      const timestamp = (row.post_date as Date).getTime()
+      const timestamp = new Date(row.createTime as string)
       return formatDate(timestamp,  'YYYY年MM月DD日 HH:mm:ss')
-    }
+    },
+    sort: (a,b) => ABoforeB(a, b)
   },
   {
     name: 'last_date',
@@ -118,179 +130,21 @@ export const column: QColumnProp[] = [
     align: 'left',
     field: row => row.last_date,
     format: (val, row) => {
-      const timestamp = (row.last_date as Date).getTime()
+      const timestamp = new Date(row.lastTime as string)
       return formatDate(timestamp,  'YYYY年MM月DD日 HH:mm:ss')
     },
     sortable: true,
-    sort: (a, b) => (a as Date).getTime() - (b as Date).getTime()
+    sort: (a, b) => ABoforeB(a, b)
   },
   {
     name: 'post_status',
     label: '发布状态',
     align: 'left',
-    field: row => row.post_status,
+    field: row => row.articleStatus,
+    format: (val, row) => {
+      return val == 1 ? '已发布' : '草稿'
+    }
   },
-  {
-    name: 'action',
-    label: '操作',
-    align: 'left',
-    field: row => row.action
-  }
 ]
 
-export const data: PostProp[]  = [
-  {
-    id: '1',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '2',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '3',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '4',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '5',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '6',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '7',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '8',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '9',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '10',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '11',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '12',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '13',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '14',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '15',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '16',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  },
-  {
-    id: '17',
-    title: 'Vue指南',
-    author: '自己',
-    post_date: addToDate(new Date(), { days: 7, months: 1 }),
-    last_date: addToDate(new Date(), { days: 7, months: 1 }),
-    post_status: 1,
-    action: 'action',
-  }
-]
-
+export const data: PostProp[] = []

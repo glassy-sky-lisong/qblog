@@ -191,6 +191,33 @@ export default store(function (/* { ssrContext } */)  {
             }
           )
         }
+      },
+      fetchAllArticle() {
+        return new Promise((resolve, reject) => {
+          void axios.get('/api/article/all').then(
+            res => {
+              if(typeof res.data.data === 'string' && /未登录/.test(res.data.data)) {
+                reject(res.data.data)
+              }
+              if (typeof res.data.data) {
+                resolve(res.data.data)
+              }
+            }
+          )
+        })
+      },
+      deleteArticleByNames({}, names: string[]) {
+        return new Promise((resolve, reject) => {
+          void axios.post('/api/article/delete/s', names).then(
+            res => {
+              if (!/失败/.test(res.data)) {
+                resolve(res.data)
+              } else {
+                reject(res.data)
+              }
+            }
+          )
+        })
       }
     },
 

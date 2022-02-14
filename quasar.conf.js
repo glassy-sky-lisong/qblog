@@ -88,7 +88,7 @@ module.exports = configure(function (ctx) {
       open: false, // opens browser window automatically,
       proxy: {
         '/api': {
-          target: 'http://localhost:887',
+          target: 'http://82.157.49.152:887',
           changeOrigin: true,
           pathRewrite: { '^/api': ''}
         }
