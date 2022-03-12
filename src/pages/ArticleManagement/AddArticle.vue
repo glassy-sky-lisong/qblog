@@ -104,7 +104,7 @@ export default defineComponent({
           () => {
             void router.push('/login')
           }
-        )
+        ).catch(err => {})
       }
 
       console.log(categoryGroup.value.length)

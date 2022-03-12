@@ -132,7 +132,7 @@ export default defineComponent({
             reject(false)
             void router.push('/login')
           }
-        )
+        ).catch(err => {})
       }
 
       if(currentArticle.value.content  !== contentValue.value) {

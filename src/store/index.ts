@@ -191,7 +191,7 @@ export default store(function (/* { ssrContext } */)  {
                 console.log(res.data)
               }
             }
-          )
+          ).catch(err => {})
         }
       },
       fetchAllArticle() {
@@ -205,7 +205,7 @@ export default store(function (/* { ssrContext } */)  {
                 resolve(res.data.data)
               }
             }
-          )
+          ).catch(err => {})
         })
       },
       deleteArticleByNames({}, names: string[]) {
@@ -218,7 +218,7 @@ export default store(function (/* { ssrContext } */)  {
                 reject(res.data)
               }
             }
-          )
+          ).catch(err => {})
         })
       },
       addArticle({}, article: PostProp) {
