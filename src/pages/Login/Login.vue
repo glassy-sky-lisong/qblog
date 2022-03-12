@@ -59,7 +59,7 @@
 <script lang='ts'>
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router'
-import { useStore, isLogin, isdefaultUser } from 'src/store'
+import { useStore, isLogin } from 'src/store'
 import { useQuasar } from 'quasar';
 
 export default  defineComponent({

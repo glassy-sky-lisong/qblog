@@ -1,10 +1,7 @@
-import { LooseDictionary } from 'quasar/dist/types/ts-helpers';
 import { date } from 'quasar';
 import { ABoforeB } from 'src/utils/date'
 
-const { addToDate, formatDate } = date
-
-export type PostStatus = 0 | 1
+const { formatDate } = date
 
 export interface QColumnProp {
   /**
@@ -16,9 +13,9 @@ export interface QColumnProp {
    */
   label: string;
   /**
-   * Row Object property to determine value for this column or function which maps to the required property
+   * Row PostProp property to determine value for this column or function which maps to the required property
    */
-  field: string | ((row: LooseDictionary) => any);
+  field: string | ((row: PostProp) => any);
   /**
    * If we use visible-columns, this col will always be visible
    */
@@ -38,8 +35,8 @@ export interface QColumnProp {
   sort?: (
     a: any,
     b: any,
-    rowA: LooseDictionary,
-    rowB: LooseDictionary
+    rowA: PostProp,
+    rowB: PostProp
   ) => number;
   /**
    * Set column sort order: 'ad' (ascending-descending) or 'da' (descending-ascending); Overrides the 'column-sort-order' prop
@@ -49,15 +46,15 @@ export interface QColumnProp {
   /**
    * Function you can apply to format your data
    */
-  format?: (val: any, row: LooseDictionary) => any;
+  format?: (val: any, row: PostProp) => any;
   /**
    * Style to apply on normal cells of the column
    */
-  style?: string | ((row: LooseDictionary) => string);
+  style?: string | ((row: PostProp) => string);
   /**
    * Classes to add on normal cells of the column
    */
-  classes?: string | ((row: LooseDictionary) => string);
+  classes?: string | ((row: PostProp) => string);
   /**
    * Style to apply on header cells of the column
    */
@@ -75,7 +72,7 @@ export interface PostProp {
   authorName: string;
   category: string;
   content: string;
-  creteTime: string | Date | number;
+  createTime: string | Date | number;
   lastTime: string | Date | number;
   description: string;
   id: number;
@@ -117,7 +114,7 @@ export const column: QColumnProp[] = [
     name: 'post_date',
     label: '发布时间',
     align: 'left',
-    field: row => row.post_date,
+    field: row => row.createTime,
     format: (val, row) => {
       const timestamp = new Date(row.createTime as string)
       return formatDate(timestamp,  'YYYY年MM月DD日 HH:mm:ss')
@@ -128,7 +125,7 @@ export const column: QColumnProp[] = [
     name: 'last_date',
     label: '修改时间',
     align: 'left',
-    field: row => row.last_date,
+    field: row => row.lastTime,
     format: (val, row) => {
       const timestamp = new Date(row.lastTime as string)
       return formatDate(timestamp,  'YYYY年MM月DD日 HH:mm:ss')
@@ -141,7 +138,7 @@ export const column: QColumnProp[] = [
     label: '发布状态',
     align: 'left',
     field: row => row.articleStatus,
-    format: (val, row) => {
+    format: (val) => {
       return val == 1 ? '已发布' : '草稿'
     }
   },

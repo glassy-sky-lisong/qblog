@@ -5,14 +5,16 @@
       inline-label
       dense
       outside-arrows
+      mobile-arrows
       align='left'
       class='full-width'
+      :style='{ "max-height": "100vw" }'
+      breakpoint='0'
     >
       <q-route-tab
         name='home'
         to='/'
         class='q-mx-xs'
-        style='max-height: 20px;'
         @click.prevent="(e, go) => { go('/') }"
       >
         <template v-slot>
@@ -39,6 +41,7 @@
 import { tabProp } from 'src/layouts/navData'
 import { defineComponent, ref, watch } from 'vue';
 import { useRouter } from 'vue-router'
+import { Screen } from 'quasar'
 
 export default defineComponent({
   name: 'TagView',
@@ -68,7 +71,8 @@ export default defineComponent({
       currentTab,
       tabs,
       addTab,
-      rmTab
+      rmTab,
+      Screen
     }
   }
 })

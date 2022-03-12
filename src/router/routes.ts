@@ -15,7 +15,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       { path: 'all', component: () => import('pages/ArticleManagement/AllArticle.vue'),meta: { title: '全部文章', icon: 'list_alt' } },
       { path: 'add', component: ()=> import('pages/ArticleManagement/AddArticle.vue'), meta: { title: '添加文章', icon: 'create' } },
-      { path: 'test2', component: ()=> import('pages/Test/test2.vue'), meta: { title: 'Subscriptions', icon: 'subscriptions' } },
+      { path: 'editor/:name', component: ()=> import('pages/ArticleManagement/EditorArticle.vue'), meta: { title: '修改文章', icon: 'gesture' } },
       { path: 'test3', component: ()=> import('pages/Test/test3.vue'), meta: { title: 'Liked videos', icon: 'thumb_up_alt' } },
     ],
     meta: {

@@ -52,14 +52,34 @@
             <q-tooltip>Account</q-tooltip>
             <q-menu>
               <q-list>
-                <q-item clickable  >
-                  <q-item-section @click='settings = true'>
+                <q-item clickable  @click='settings = true'>
+                  <q-item-section avatar>
+                    <q-icon name="settings" />
+                  </q-item-section>
+                  <q-item-section>
                     设置
+                  </q-item-section>
+                  <q-item-section side>
+                  </q-item-section>
+                </q-item>
+                <q-item clickable  @click='confirm = true'>
+                  <q-item-section avatar>
+                    <q-icon name="settings" />
+                  </q-item-section>
+                  <q-item-section>
+                    注销账号
+                  </q-item-section>
+                  <q-item-section side>
                   </q-item-section>
                 </q-item>
                 <q-item clickable @click.once='logout'>
+                  <q-item-section avatar>
+                    <q-icon name="settings" />
+                  </q-item-section>
                   <q-item-section>
-                    登出
+                    退出登录
+                  </q-item-section>
+                  <q-item-section side>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -131,6 +151,20 @@
         </simple-item>
       </simple-list>
     </pop-card>
+
+    <q-dialog v-model="confirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="signal_wifi_off" color="primary" text-color="white" />
+          <span class="q-ml-sm">您确定要注销账号吗？</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="手滑了" color="primary" v-close-popup />
+          <q-btn flat label="我确定" color="primary" v-close-popup @click='cancelHandle' />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
@@ -144,9 +178,8 @@ import SlideGroup from 'src/components/SlideGrop/SlideGroup.vue';
 import PopCard from 'src/components/PopCard/PopCard.vue';
 import SimpleList from 'src/components/simepleList/simpleList.vue';
 import SimpleItem from 'src/components/simepleList/simpleItem.vue';
-import { UserProps, useStore } from 'src/store/index';
+import { useStore } from 'src/store/index';
 import { defineComponent, ref, onMounted, computed, onUpdated } from 'vue'
-import { date, useQuasar } from 'quasar';
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
@@ -158,10 +191,10 @@ export default defineComponent({
     const search = ref('')
     const tagViewRef = ref(null)
     const router = useRouter()
-    const $q = useQuasar()
     const store = useStore()
     const settings = ref(false)
     const currentUser = computed(() => store.getters.currentUser)
+    const confirm = ref(false)
 
 
     const logout = () => {
@@ -189,6 +222,10 @@ export default defineComponent({
           } else throw new Error('get LoginUser fail')
         }
       ).catch(err => console.error(err))
+    }
+
+    const cancelHandle = () => {
+      console.log('cancel')
     }
 
     onMounted(() => {
@@ -233,7 +270,9 @@ export default defineComponent({
       logout,
       settings,
       onBtnClick,
-      currentUser
+      currentUser,
+      confirm,
+      cancelHandle
     }
   }
 })

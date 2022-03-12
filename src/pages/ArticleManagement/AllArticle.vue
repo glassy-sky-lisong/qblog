@@ -186,7 +186,6 @@ import ExtendMenuItem from 'src/components/ContextMenu/ExtendMenuItem.vue'
 import { column as columns, PostProp } from './tableData'
 import { defineComponent, ref, onMounted } from 'vue'
 import { useStore } from 'src/store'
-import { evaArrowCircleRight } from '@quasar/extras/eva-icons';
 
 export type Mode = 'multiple' | 'single' | 'none'
 
@@ -221,13 +220,13 @@ export default  defineComponent({
       // todo
       setLoading('正在删除')
       store.dispatch('deleteArticleByNames', deleteFiles).then(
-        res => {
+        () => {
           //  delete
           datas.value = []
 
           // 拉取数据
           setLoading('正在拉取数据')
-          fetchAllArticle().then(res => {
+          fetchAllArticle().then(() => {
             clearLoading()
           }).catch(err => console.error(err))
         }

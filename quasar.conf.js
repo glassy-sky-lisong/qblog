@@ -29,7 +29,7 @@ module.exports = configure(function (ctx) {
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
     boot: [
-      'i18n',
+      // 'i18n',
       // 'axios',
       'md-editor'
     ],
@@ -110,7 +110,7 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: [ 'Notify', 'Cookies', 'LocalStorage', 'SessionStorage' ]
+      plugins: [ 'Notify', 'Cookies', 'LocalStorage', 'SessionStorage', 'Dialog' ]
     },
 
     // animations: 'all', // --- includes all animations

@@ -8,6 +8,7 @@ import {
 import axios from 'src/axios'
 import { router } from 'src/router'
 import { date, Cookies, SessionStorage } from 'quasar'
+import { PostProp } from '../pages/ArticleManagement/tableData';
 
 const { formatDate } = date
 
@@ -120,20 +121,20 @@ export default store(function (/* { ssrContext } */)  {
         }
         Store.commit('setCurrentUser', newUser)
       },
-      setLoginCookie(state) {
+      setLoginCookie() {
         Cookies.set('loginer', 'true', {
           expires: '3d',
           httpOnly: false,
           path: '/'
         })
       },
-      clearLoginCookie(state) {
+      clearLoginCookie() {
         Cookies.has('loginer') && Cookies.remove('loginer')
       },
-      setLoginSession(state) {
+      setLoginSession() {
         SessionStorage.set('loginer', true)
       },
-      clearLoginSession(state) {
+      clearLoginSession() {
         SessionStorage.has('loginer') && SessionStorage.remove('loginer')
       }
     },
@@ -153,6 +154,7 @@ export default store(function (/* { ssrContext } */)  {
               (res) => {
                 console.log(res)
                 if (res.data) {
+                  console.log(res.data)
                   commit('setUser', res.data)
                   formData.get('remember-me') === '1' ? commit('setLoginCookie') : commit('setLoginSession')
                   resolve(true);
@@ -168,7 +170,7 @@ export default store(function (/* { ssrContext } */)  {
           }
         })
       },
-      logout({ commit, state }) {
+      logout({ commit }) {
         return new Promise((resolve) => {
             commit('clearLoginCookie')
             commit('clearLoginSession')
@@ -217,6 +219,119 @@ export default store(function (/* { ssrContext } */)  {
               }
             }
           )
+        })
+      },
+      addArticle({}, article: PostProp) {
+        return new Promise((resolve, reject) => {
+          void axios.post('/api/article/add', article).then(
+            res => {
+              console.log(res.data)
+              if (res.data.errors.length > 0) {
+                reject((res.data.errors as Array<string>).toString())
+              } else if (/已存在/.test(res.data.data)) {
+                resolve('文章已存在')
+              } else if (/异常/.test(res.data.data)) {
+                reject(res.data.data)
+              } else {
+                resolve('添加成功')
+              }
+            }
+          ).catch(err => reject(err))
+        })
+      },
+      fetchAllCategory({}) {
+        return new Promise((resolve, reject) => {
+          axios.get('/api/category/all').then(
+            res => {
+              if (Array.isArray(res.data.data)) {
+                const categories = (res.data.data as Array<{ id: number; categoryName: string }>).map(item => item.categoryName)
+                resolve(categories)
+              } else {
+                reject('data not a Array')
+              }
+            }
+          ).catch(err => reject(err))
+        })
+      },
+      getArticleByName({}, name: string) {
+        return new Promise((resolve, reject) => {
+          axios.get('/api/article/name/'+ name.trim()).then(
+            res => {
+              if (res.data.data.id) {
+                resolve(res.data.data)
+              } else if (/不存在/.test(res.data.data)) {
+                reject('文章不存在')
+              } else if (res.data.errors.length > 0) {
+                const errors = (res.data.errors as Array<string>).reduce((prev, item) => prev === '' ? item : prev + ',' + item , '')
+                reject(errors)
+              } else {
+                reject('未知异常')
+              }
+            }
+          ).catch(err => reject(err))
+        })
+      },
+      getArticleById({}, id: number) {
+        return new Promise((resolve, reject) => {
+          axios.get(`/api/article/id/${id}`).then(
+            res => {
+              if(res.data.data) {
+                resolve(res.data.data)
+              } else if (res.data.errors.length >= 1 && res.data.errors[0] !== '') {
+                reject((res.data.errors as Array<string>).toString())
+              }
+            }
+          ).catch(err => reject(err))
+        })
+      },
+      updateArticleById({}, options: {id: number; article: Partial<PostProp> }) {
+        return new Promise((resolve, reject) => {
+          axios.post(`/api/article/edit/id/${options.id}`, options.article).then(
+            res => {
+              if(/成功/.test(res.data.data)) {
+                resolve('更新成功')
+              } else if(res.data.errors.length >=1 && res.data.errors[0] !== '') {
+                reject((res.data.errors as Array<string>).toString())
+              }
+            }
+          ).catch(err => reject(err))
+        })
+      },
+      editUserPwd({}, options: { id: number; password: string }) {
+        return new Promise((resolve, reject) => {
+          axios.post('/api/user/update', options).then(res => {
+            if (/成功/.test(res.data.data)) {
+              resolve('修改成功')
+            } else if(/失败/.test(res.data.data)) {
+              reject('修改失败')
+            } else {
+              reject('未知异常')
+            }
+          }).catch(err => reject(err))
+        })
+      },
+      cancelAccount({ state }) {
+        return new Promise((resolve, reject) => {
+          if (isdefaultUser(state)) {
+            reject('缺少权限')
+          } else {
+            axios.post('/api/user/forget', {
+              userName: state.currentUser.username,
+              email: state.currentUser.email
+            }).then(
+              res => {
+                if (/不需要/.test(res.data.data)) {
+                  resolve('账号已经重置过了')
+                } else if (/失败/.test(res.data.data)) {
+                  reject('重置失败')
+                } else if (/成功/.test(res.data.data)) {
+                  resolve('重置成功')
+                } else {
+                  reject('未知异常')
+                }
+              }
+            ).catch(err => reject(err))
+          }
         })
       }
     },

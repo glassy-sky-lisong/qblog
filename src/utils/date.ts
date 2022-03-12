@@ -7,7 +7,7 @@
  * @constructor
  */
 export const ABoforeB = (a: string, b: string): number => {
-  const temp = new Date(a).getTime() - new Date(a).getTime()
+  const temp = new Date(a).getTime() - new Date(b).getTime()
 
   if (temp > 0) {
     return 1
