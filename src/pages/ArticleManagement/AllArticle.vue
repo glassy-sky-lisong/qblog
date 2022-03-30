@@ -95,6 +95,7 @@
         :loading='tableLoading'
         rows-per-page-label='每页显示行数'
         :pagination-label='(firstRowIndex, endRowIndex, totalNumers) => `共${totalNumers}条记录`'
+        @row-contextmenu='contextMenuHandler'
       >
        <template v-slot:top>
 
@@ -166,8 +167,8 @@
         </template>
       </q-table>
 
-       <context-menu>
-         <c-menu-item label="Open..." ></c-menu-item>
+       <context-menu v-if='mode === "none"'>
+         <c-menu-item label="编辑" @click='openHandler' ></c-menu-item>
          <c-menu-item label='Format' separator></c-menu-item>
          <extend-menu-item icon='arrow_right' label='选择列' separator >
            <template v-for='(c) in $refs.tableRef.columns' :key='c.id'>
@@ -184,8 +185,9 @@ import ContextMenu from 'src/components/ContextMenu/ContextMenu.vue'
 import CMenuItem from 'src/components/ContextMenu/MenuItem.vue'
 import ExtendMenuItem from 'src/components/ContextMenu/ExtendMenuItem.vue'
 import { column as columns, PostProp } from './tableData'
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, Ref } from 'vue'
 import { useStore } from 'src/store'
+import { useRouter } from 'vue-router'
 
 export type Mode = 'multiple' | 'single' | 'none'
 
@@ -200,6 +202,19 @@ export default  defineComponent({
     const tableLoadingLabel = ref('')
     const mode = ref<Mode>('none')
     const store = useStore()
+    const router = useRouter()
+    const currentRow = ref<Partial<PostProp>>({
+      articleName: '',
+      articleStatus: -1,
+      authorId: -1,
+      authorName: '',
+      category: '',
+      content: '',
+      createTime: '',
+      lastTime: '',
+      description: '',
+      id: -1
+    })
 
     const setLoading = (msg: string) => {
       tableLoading.value = true
@@ -276,6 +291,18 @@ export default  defineComponent({
       ).catch(err => { console.error(err); clearLoading() })
     }
 
+    const openHandler = (e: MouseEvent) => {
+      console.log(currentRow.value)
+      if (currentRow.value.id != -1 && currentRow.value.articleName) {
+        void router.push(`/article/editor/${currentRow.value.articleName}`)
+      }
+    }
+
+    const contextMenuHandler = (e: Event, row: PostProp, index: number) => {
+      console.log(e, row, index)
+      currentRow.value = row
+    }
+
     onMounted(() =>[
       initArticleList()
     ])
@@ -294,7 +321,13 @@ export default  defineComponent({
       visibleColumns,
       tableLoading,
       tableLoadingLabel,
+      openHandler,
+      contextMenuHandler,
+      currentRow
     }
+  },
+  mounted() {
+    console.log(this.$parent)
   }
 })
 </script>

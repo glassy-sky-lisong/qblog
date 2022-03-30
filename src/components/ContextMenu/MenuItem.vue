@@ -33,12 +33,12 @@ export default defineComponent({
       required: false
     },
   },
-  emits: [ 'click', 'menu-select', 'menu-no-select' ],
+  emits: [ 'menu-select', 'menu-no-select', 'click' ],
   setup (props, { emit }) {
     const isSelected =  ref( props.selected )
-    const clickHandle = () => {
-      emit('click');
+    const clickHandle = (e: MouseEvent) => {
       if (isSelected.value !== null) {
+        emit('click', e)
         isSelected.value = !isSelected.value
         setTimeout(() => {
           isSelected.value ? emit('menu-select') : emit('menu-no-select');
