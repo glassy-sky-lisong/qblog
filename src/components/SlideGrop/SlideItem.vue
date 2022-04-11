@@ -1,4 +1,4 @@
-<template>
+<template v-uf='item.show'>
   <q-item-label
     header
     class="text-weight-bold text-uppercase"
@@ -7,66 +7,47 @@
     {{ subtitle }}
   </q-item-label>
 
-  <template v-if='Array.isArray(item)'>
-
-    <template  v-for='(v, i) in item' :key='i + v.label'>
+  <template v-if='item.children && item.children.length > 0'>
 
       <q-expansion-item
-        v-if="v.children"
-        :icon="v.icon"
-        :label="v.label"
+        :icon="item.icon"
+        :label="item.label"
         expand-separator
       >
         <template v-slot:header>
           <q-item-section avatar>
-            <q-icon color="grey" :name="v.icon" />
+            <q-icon color="grey" :name="item.icon" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ v.label }}</q-item-label>
+            <q-item-label>{{ item.label }}</q-item-label>
           </q-item-section>
         </template>
 
         <q-list padding>
-          <q-item
-            v-for="(c, n) in v.children"
-            :key="c.label + n"
-            class="q-pl-lg"
-            @click.stop='$emit("add-tab", c)'
-            v-ripple
-            clickable
-          >
-            <q-item-section avatar>
-              <q-icon color="grey" :name="c.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ c.label }}</q-item-label>
-            </q-item-section>
-          </q-item>
+          <template v-for="(v, i) in item.children" :key="v.name + i">
+            <q-item
+              v-if='v.show'
+              class="q-pl-lg"
+              @click="$router.push(v.to || '/')"
+              v-ripple
+              clickable
+            >
+              <q-item-section avatar>
+                <q-icon color="grey" :name="v.icon" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ v.label }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
         </q-list>
       </q-expansion-item>
-
-      <q-item
-        v-ripple
-        clickable
-        v-else
-        @click="v.to !== '/' ? $emit('add-tab', v) : $router.push('/')"
-      >
-        <q-item-section avatar>
-          <q-icon color="grey" :name="v.icon" />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>{{ v.label }}</q-item-label>
-        </q-item-section>
-      </q-item>
-
-    </template>
-
 
   </template>
 
   <template v-else>
 
-    <q-item v-ripple clickable @click="item.to !== '/' ? $emit('add-tab', item) : $router.push('/')">
+    <q-item v-ripple clickable @click="$router.push(item.to || '/')">
       <q-item-section avatar>
         <q-icon color="grey" :name="item.icon" />
       </q-item-section>
@@ -81,17 +62,20 @@
 
 <script lang='ts' >
 import { defineComponent, PropType } from 'vue';
-import { navProp } from '../../layouts/navData';
+import { Nav } from './nav';
 
-export type SlideItemType = PropType<navProp | navProp[]>
+
+export type SlideItemType = PropType<Nav>
 
 export default  defineComponent({
   name: 'SlideItem',
   props: {
     subtitle: String,
-    item : [Object, Array] as SlideItemType,
+    item : {
+      type: Object as SlideItemType,
+      required: true
+    },
   },
-  emits: [ 'add-tab' ],
   setup () {
     return {}
   }

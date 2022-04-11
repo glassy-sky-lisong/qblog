@@ -33,7 +33,6 @@
 
 <script lang='ts'>
 import { defineComponent } from 'vue'
-import { useQuasar } from 'quasar'
 
 export default defineComponent({
   name: 'PopCard',
@@ -69,14 +68,11 @@ export default defineComponent({
   },
   emits: [ 'save', 'update:modelValue' ],
   setup(props, { emit }) {
-
-    const $q = useQuasar()
-
     const onClose = () => {
       emit('update:modelValue', false)
     }
 
-    return { onClose, $q }
+    return { onClose, }
   }
 })
 </script>

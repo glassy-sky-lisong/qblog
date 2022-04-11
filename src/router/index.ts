@@ -41,7 +41,7 @@ export default route<StateInterface>(function ( {store/*, ssrContext */ } ) {
  router = Router
 
   Router.beforeEach((to,from, next ) => {
-    if (to.name === 'Login' || to.name === 'Registry') {
+    if (to.name === 'login' || to.name === 'registry') {
 
         next()
 

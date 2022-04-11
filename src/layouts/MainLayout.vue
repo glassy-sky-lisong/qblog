@@ -90,20 +90,17 @@
 
       <q-separator class="grey-3" />
 
-      <tag-view ref='tabViewRef' ></tag-view>
+      <tag-view v-model='keepAlivedList' ></tag-view>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240">
       <q-scroll-area class="fit" :thumb-style="{ 'border-radius': '5px', 'background-color': 'rgba(144, 147, 153, 0.9)', width: '3px', height: '50px', top: '0px' }" >
 
-          <slide-group>
-            <slide-item :item='links1' @add-tab='(el) => $refs.tabViewRef.addTab(el)'></slide-item>
-            <q-separator class="q-my-md" />
-            <slide-item :item='links2' @add-tab='(el) => $refs.tabViewRef.addTab(el)' />
-            <q-separator class="q-mt-md q-mb-xs" />
-            <slide-item subtitle='More for YouTube' :item='links3' @add-tab='(el) => $refs.tabViewRef.addTab(el)' ></slide-item>
-            <q-separator class="q-my-md" />
-            <slide-item :item='links4' @add-tab='(el) => $refs.tabViewRef.addTab(el)' ></slide-item>
+          <slide-group class='q-mt-md'>
+            <slide-item :item='defaultNav'></slide-item>
+            <template v-for='v in navs' :key='v.name'>
+              <slide-item :item='v'></slide-item>
+            </template>
           </slide-group>
 
       </q-scroll-area>
@@ -111,7 +108,7 @@
 
     <q-page-container>
         <router-view v-slot='{ Component }'>
-          <keep-alive>
+          <keep-alive :include='keepAlivedList'>
             <component :is='Component'></component>
           </keep-alive>
         </router-view>
@@ -170,7 +167,6 @@
 
 <script lang="ts">
 import { fabYoutube } from '@quasar/extras/fontawesome-v5'
-import { nav0, nav1, nav2, nav3, nav4 } from './navData'
 import TagView from 'src/components/TagView/TagView.vue'
 import Breadcrumbs from 'src/components/Breadcrumbs/Breadcrumbs.vue'
 import SlideItem from 'src/components/SlideGrop/SlideItem.vue'
@@ -182,19 +178,25 @@ import { useStore } from 'src/store/index';
 import { defineComponent, ref, onMounted, computed, onUpdated } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { initNav } from 'src/utils/router'
+import { Nav } from 'src/components/SlideGrop/nav'
+import { tabs } from './navData'
 
 export default defineComponent({
   name: 'MainLayout',
-  components: { TagView, Breadcrumbs, SlideItem, SlideGroup, PopCard, SimpleList, SimpleItem },
+  components: { TagView , Breadcrumbs, SlideItem, SlideGroup, PopCard, SimpleList, SimpleItem },
   setup() {
     const leftDrawerOpen = ref(false)
     const search = ref('')
-    const tagViewRef = ref(null)
+    const keepAlivedList = ref<string[]>([])
     const router = useRouter()
     const store = useStore()
     const settings = ref(false)
     const currentUser = computed(() => store.getters.currentUser)
     const confirm = ref(false)
+
+    const navs = ref<Nav[]>([])
+    const defaultNav: Nav = { name: 'Home', icon: 'home', to: '/', label: '主页', children: [], show: true }
 
 
     const logout = () => {
@@ -207,10 +209,6 @@ export default defineComponent({
           }
         }
       ).catch(err => console.error(err))
-    }
-
-    const onBtnClick = () => {
-      console.log('btn-click')
     }
 
     const getLoginedUser = () => {
@@ -232,12 +230,11 @@ export default defineComponent({
       console.log('mounted')
       // getLoginedUser()
       void store.dispatch('fetchCurrentUser')
+
+      navs.value = initNav(tabs)
     })
 
     onUpdated(() => console.log('updated'))
-
-
-
 
     return {
       leftDrawerOpen,
@@ -246,33 +243,14 @@ export default defineComponent({
       },
       search,
       fabYoutube,
-      link0: nav0,
-      links1:nav1,
-      links2: nav2,
-      links3: nav3,
-      links4: nav4,
-      buttons1: [
-        { text: 'About' },
-        { text: 'Press' },
-        { text: 'Copyright' },
-        { text: 'Contact us' },
-        { text: 'Creators' },
-        { text: 'Advertise' },
-        { text: 'Developers' }
-      ],
-      buttons2: [
-        { text: 'Terms' },
-        { text: 'Privacy' },
-        { text: 'Policy & Safety' },
-        { text: 'Test new features' }
-      ],
-      tagViewRef,
+      keepAlivedList,
       logout,
       settings,
-      onBtnClick,
       currentUser,
       confirm,
-      cancelHandle
+      cancelHandle,
+      navs,
+      defaultNav
     }
   }
 })

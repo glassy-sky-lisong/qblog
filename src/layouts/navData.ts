@@ -1,47 +1,71 @@
-import { fabYoutube } from '@quasar/extras/fontawesome-v5'
+import { OptionsProp } from '../utils/router';
 
-export interface navProp {
+export interface Tab {
+  name: string;
   icon: string;
   label: string;
-  to?: string;
-  children?: navProp[]
+  show: boolean;
+  children: Tab[]
 }
 
-export interface tabProp extends navProp {
-  name?: string;
-}
-
-export const nav0: navProp = {
-  icon: 'home',
-  label: 'Home',
-  to: '/'
-}
-
-export const nav1: Array<navProp> = [
-  { icon: 'home', label: '主页', to: '/' },
-  { icon: 'folder', label: '文章管理', children: [  { icon: 'create', label: '添加文章', to: '/article/add' }, { icon: 'gesture', label: '修改文章', to: '/article/editor/Vue初体验' }, { icon: 'thumb_up_alt', label: 'Liked videos', to: '/article/test3' }, { icon: 'list_alt', label: '全部文章', to: '/article/all' } ] },
-  { icon: 'whatshot', label: 'Trending', to: '/' },
-  { icon: 'subscriptions', label: 'Subscriptions', to: '/' },
-]
-
-export const nav2: Array<navProp> = [
-  { icon: 'folder', label: 'Library', to: '/' },
-  { icon: 'restore', label: 'History', to: '/' },
-  { icon: 'watch_later', label: 'Watch  later', to: '/' },
-  { icon: 'thumb_up_alt', label: 'Liked videos', to: '/' }
-]
-
-export const nav3: Array<navProp> = [
-  { icon: fabYoutube, label: 'YouTube Premium', to: '/' },
-  { icon: 'local_movies', label: 'Movies & Shows', to: '/' },
-  { icon: 'videogame_asset', label: 'Gaming', to: '/' },
-  { icon: 'live_tv', label: 'Live', to: '/' }
-]
-
-export const nav4: Array<navProp> = [
-  { icon: 'settings', label: 'Settings', to: '/' },
-  { icon: 'flag', label: 'Report history', to: '/' },
-  { icon: 'help', label: 'Help', to: '/' },
-  { icon: 'feedback', label: 'Send feedback', to: '/' }
+export const tabs: OptionsProp[] = [
+  {
+    name: 'articleManagement',
+    component: () => import('src/layouts/MainLayout.vue'),
+    icon: 'folder',
+    label: '文章管理',
+    path: '/article',
+    show: true,
+    children: [
+      {
+        name: 'addArticle',
+        component: () => import('src/pages/ArticleManagement/AddArticle.vue'),
+        icon: 'create',
+        label: '添加文章',
+        path: 'add',
+        show: true
+      },
+      {
+        name: 'editorArticle',
+        icon: 'gesture',
+        label: '修改文章',
+        path: 'editor/:name',
+        component: () => import('src/pages/ArticleManagement/EditorArticle.vue'),
+        show: false
+      },
+      {
+        name: 'test3',
+        icon: 'thumb_up_alt',
+        label: 'Liked videos',
+        path: 'test3',
+        component: () => import('src/pages/Test/test3.vue'),
+        show: true
+      },
+      {
+        name: 'allArticle',
+        icon: 'list_alt',
+        label: '全部文章',
+        path: 'all',
+        component: () => import('src/pages/ArticleManagement/AllArticle.vue'),
+        show: true
+      }
+    ],
+  },
+  {
+    name: 'test2',
+    icon: 'whatshot',
+    label: 'Trending',
+    path: '/test2',
+    component: import('src/pages/Test/test2.vue'),
+    show: true
+  },
+  {
+    name: 'test1',
+    icon: 'subscriptions',
+    label: 'Subscriptions',
+    path: '/test1',
+    component: import('src/pages/Test/test1.vue'),
+    show: true
+  }
 ]
 

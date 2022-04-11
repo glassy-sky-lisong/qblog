@@ -1,37 +1,29 @@
 import { RouteRecordRaw } from 'vue-router';
+import { tabs } from 'src/layouts/navData';
+import { initRoutes, lRoutes, rRoutes } from 'src/utils/router'
+
+initRoutes(tabs)
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
+    name: 'home',
     children: [
-      { path: '', component: () => import('pages/Index.vue') },
+      { path: '', component: () => import('pages/Index.vue'), name: 'index', meta: { tab: { label: '主页', icon: 'home', name: 'index', } } },
+      ...rRoutes
     ],
-    meta: { title: '主页', icon: 'home' }
   },
-  {
-    path: '/article',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: 'all', component: () => import('pages/ArticleManagement/AllArticle.vue'),meta: { title: '全部文章', icon: 'list_alt' } },
-      { path: 'add', component: ()=> import('pages/ArticleManagement/AddArticle.vue'), meta: { title: '添加文章', icon: 'create' } },
-      { path: 'editor/:name', component: ()=> import('pages/ArticleManagement/EditorArticle.vue'), meta: { title: '修改文章', icon: 'gesture' } },
-      { path: 'test3', component: ()=> import('pages/Test/test3.vue'), meta: { title: 'Liked videos', icon: 'thumb_up_alt' } },
-    ],
-    meta: {
-      icon: 'folder',
-      title: 'Folder'
-    }
-  },
+  ...lRoutes,
   {
     path: '/login',
     component: () => import('pages/Login/Login.vue'),
-    name: 'Login'
+    name: 'login'
   },
   {
     path: '/registry',
     component: () => import('pages/Registry/Registry.vue'),
-    name: 'Registry'
+    name: 'registry'
   },
 
   // Always leave this as last one,
