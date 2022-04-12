@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh lpR fFf" class="bg-grey-1 main-layout" ref='layoutRef'>
+  <q-layout container view="hHh lpR fFf" class="bg-grey-1 main-layout" ref='layoutRef' style='height: 100vh;'>
     <q-header elevated class="bg-white text-grey-8 q-py-xs">
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
@@ -93,7 +93,14 @@
       <tag-view v-model='keepAlivedList' ></tag-view>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240">
+    <q-drawer
+      v-model="leftDrawerOpen"
+      show-if-above
+      bordered
+      class="bg-grey-2"
+      :width="240"
+      :breakpoint='500'
+    >
       <q-scroll-area class="fit" :thumb-style="{ 'border-radius': '5px', 'background-color': 'rgba(144, 147, 153, 0.9)', width: '3px', height: '50px', top: '0px' }" >
 
           <slide-group class='q-mt-md'>
@@ -107,11 +114,11 @@
     </q-drawer>
 
     <q-page-container>
-        <router-view v-slot='{ Component }'>
-          <keep-alive :include='keepAlivedList'>
-            <component :is='Component'></component>
-          </keep-alive>
-        </router-view>
+      <router-view v-slot='{ Component }'>
+        <keep-alive :include='keepAlivedList'>
+          <component :is='Component'></component>
+        </keep-alive>
+      </router-view>
     </q-page-container>
 
     <pop-card
@@ -270,4 +277,33 @@ export default defineComponent({
     border-color: rgba(0, 0, 0, 0.24);
   }
 }
+
+</style>
+
+<style lang='scss'>
+  aside.q-drawer {
+    position: fixed;
+  }
+
+  .q-layout-container {
+    .absolute-full {
+      right: 0 !important;
+    }
+
+    .scroll {
+      width: 100% !important;
+    }
+
+    .scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 6px;
+      background: #e1d9d900;
+    }
+
+    .scroll::-webkit-scrollbar-thumb {
+      width: 4px;
+      height: 20px;
+      background: #0c4c3a78;
+    }
+  }
 </style>
