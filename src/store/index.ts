@@ -121,6 +121,29 @@ export default store(function (/* { ssrContext } */)  {
         }
         Store.commit('setCurrentUser', newUser)
       },
+      updateUser(state, data: Partial<UserProps>) {
+        if(data.id && data.id !== state.currentUser.id && data.id !== defaultUser.id) {
+          state.currentUser.id = data.id
+        }
+        if(data.username && data.username !== state.currentUser.username && data.username !== defaultUser.username) {
+          state.currentUser.username = data.username
+        }
+        if(data.password && data.password !== state.currentUser.password && data.password !== defaultUser.password) {
+          state.currentUser.password = data.password
+        }
+        if(data.gender && data.gender !== state.currentUser.gender && data.gender !== defaultUser.gender) {
+          state.currentUser.gender = data.gender
+        }
+        if(data.email && data.email !== state.currentUser.email && data.email !== defaultUser.email) {
+          state.currentUser.email = data.email
+        }
+        if (data.birthday && data.birthday !== state.currentUser.birthday && data.birthday !== defaultUser.birthday) {
+          state.currentUser.birthday = data.birthday
+        }
+        if(data.avatar && data.avatar !== state.currentUser.avatar && data.avatar !== defaultUser.avatar) {
+          state.currentUser.avatar = data.avatar
+        }
+      },
       setLoginCookie() {
         Cookies.set('loginer', 'true', {
           expires: '3d',

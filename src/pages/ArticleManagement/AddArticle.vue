@@ -63,7 +63,7 @@
 <script lang='ts'>
 import { defineComponent, ref, Ref } from 'vue'
 import { useQuasar } from 'quasar'
-import PopCard from '../../components/PopCard/PopCard.vue';
+import PopCard from 'components/PopCard/PopCard.vue';
 import SimpleSelect from '../../components/SimpleSelect/SimpleSelect.vue';
 import { PostProp } from './tableData';
 import { useStore, isdefaultUser } from 'src/store'

@@ -50,9 +50,9 @@
               <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
             </q-avatar>
             <q-tooltip>Account</q-tooltip>
-            <q-menu>
+            <q-menu auto-close>
               <q-list>
-                <q-item clickable  @click='settings = true'>
+                <q-item clickable  @click='this.$refs.procardRef.openCard();'>
                   <q-item-section avatar>
                     <q-icon name="settings" />
                   </q-item-section>
@@ -121,40 +121,7 @@
       </router-view>
     </q-page-container>
 
-    <pop-card
-      title='我是标题'
-      v-model='settings'
-      @save='close => close()'
-    >
-      <simple-list>
-        <simple-item
-          caption-label='基本信息'
-          left-label='头像'
-          btn-label='上传'
-          btn-class='q-my-auto'
-          :btn-style='{ height: "1rem" }'
-        >
-          <q-avatar sizes='lg' style='width: 4rem; height: 4rem;flex: 1;'>
-            <q-img width='4rem' height='4rem' :src='currentUser.avatar' sizes='lg'></q-img>
-          </q-avatar>
-        </simple-item>
-        <simple-item left-label='用户名'>
-          {{ currentUser.username }}
-        </simple-item>
-        <simple-item left-label='密码' btn-label='修改' @btn-click='onBtnClick'>
-          {{ currentUser.password }}
-        </simple-item>
-        <simple-item left-label='性别'>
-          {{ currentUser.gender }}
-        </simple-item>
-        <simple-item left-label='生日'>
-          {{ currentUser.birthday }}
-        </simple-item>
-        <simple-item left-label='电子邮箱' btn-label='修改'>
-          {{ currentUser.email }}
-        </simple-item>
-      </simple-list>
-    </pop-card>
+   <settings-card :current-user='currentUser' @update-user='updateUser' ref='procardRef' ></settings-card>
 
     <q-dialog v-model="confirm" persistent>
       <q-card>
@@ -178,27 +145,22 @@ import TagView from 'src/components/TagView/TagView.vue'
 import Breadcrumbs from 'src/components/Breadcrumbs/Breadcrumbs.vue'
 import SlideItem from 'src/components/SlideGrop/SlideItem.vue'
 import SlideGroup from 'src/components/SlideGrop/SlideGroup.vue';
-import PopCard from 'src/components/PopCard/PopCard.vue';
-import SimpleList from 'src/components/simepleList/simpleList.vue';
-import SimpleItem from 'src/components/simepleList/simpleItem.vue';
 import { useStore } from 'src/store/index';
 import { defineComponent, ref, onMounted, computed, onUpdated } from 'vue'
-import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { initNav } from 'src/utils/router'
 import { Nav } from 'src/components/SlideGrop/nav'
 import { tabs } from './navData'
+import SettingsCard from 'layouts/SettingsCard/SettingsCard.vue';
 
 export default defineComponent({
   name: 'MainLayout',
-  components: { TagView , Breadcrumbs, SlideItem, SlideGroup, PopCard, SimpleList, SimpleItem },
+  components: { SettingsCard, TagView , Breadcrumbs, SlideItem, SlideGroup },
   setup() {
     const leftDrawerOpen = ref(false)
     const search = ref('')
     const keepAlivedList = ref<string[]>([])
-    const router = useRouter()
     const store = useStore()
-    const settings = ref(false)
     const currentUser = computed(() => store.getters.currentUser)
     const confirm = ref(false)
 
@@ -206,38 +168,8 @@ export default defineComponent({
     const defaultNav: Nav = { name: 'Home', icon: 'home', to: '/', label: '主页', children: [], show: true }
 
 
-    const logout = () => {
-      void store.dispatch('logout').then(
-        res => {
-          if (res) {
-            void router.push('/login')
-          } else {
-            console.log('logout unknown error')
-          }
-        }
-      ).catch(err => console.error(err))
-    }
-
-    const getLoginedUser = () => {
-      void axios.get('/api/user/current-user').then(
-        res => {
-          console.log(res.data)
-          if (res.data.data) {
-            store.commit('setUser', res.data.data)
-          } else throw new Error('get LoginUser fail')
-        }
-      ).catch(err => console.error(err))
-    }
-
-    const cancelHandle = () => {
-      console.log('cancel')
-    }
-
     onMounted(() => {
-      console.log('mounted')
-      // getLoginedUser()
       void store.dispatch('fetchCurrentUser')
-
       navs.value = initNav(tabs)
     })
 
@@ -245,19 +177,49 @@ export default defineComponent({
 
     return {
       leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      },
       search,
       fabYoutube,
       keepAlivedList,
-      logout,
-      settings,
       currentUser,
       confirm,
-      cancelHandle,
       navs,
-      defaultNav
+      defaultNav,
+    }
+  },
+  methods: {
+    logout() {
+      void this.$store.dispatch('logout').then(
+        res => {
+          if (res) {
+            void this.$router.push('/login')
+          } else {
+            console.log('logout unknown error')
+          }
+        }
+      ).catch(err => console.error(err))
+    },
+    getLoginedUser() {
+      void axios.get('/api/user/current-user').then(
+        res => {
+          console.log(res.data)
+          if (res.data.data) {
+            this.$store.commit('setUser', res.data.data)
+          } else throw new Error('get LoginUser fail')
+        }
+      ).catch(err => console.error(err))
+    },
+    cancelHandle() {
+      console.log('cancel')
+    },
+    toggleLeftDrawer() {
+      this.leftDrawerOpen = !this.leftDrawerOpen
+    },
+    updateUser({ username, password }) {
+      this.$store.commit('updateUser', {
+        username,
+        password,
+      })
+    //  async update user
     }
   }
 })
