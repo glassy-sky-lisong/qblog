@@ -14,7 +14,6 @@
 <script lang='ts'>
 import { defineComponent, computed  } from 'vue'
 import { useRoute, RouteLocationMatched } from 'vue-router'
-import { TabMeta } from 'src/utils/router'
 
 export default defineComponent({
   name: 'Breadcrumbs',

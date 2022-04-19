@@ -78,12 +78,12 @@ export default defineComponent({
   setup() {
 
     return {
-      cardPosition: reactive({ "min-width": '0px', top: '0', left: '0' }),
+      cardPosition: reactive({ 'min-width': '0px', top: '0', left: '0' }),
       cardDisabled: ref(false)
     }
   },
   mounted() {
-    this.cardPosition['min-width'] =  this.$q.screen.lt.sm ? "80vw" : "50vw"
+    this.cardPosition['min-width'] =  this.$q.screen.lt.sm ? '80vw' : '50vw'
     this.cardPosition['top'] = '50%'
     this.cardPosition['left'] = '50%'
 
@@ -94,7 +94,6 @@ export default defineComponent({
       this.$emit('update:modelValue', false)
     },
     dragHandle(details: TouchPanProp) {
-      console.log(details)
       this.cardDisabled = details.isFirst !== true && details.isFinal !== true
 
       this.cardPosition.left = `${details.position.left}px`

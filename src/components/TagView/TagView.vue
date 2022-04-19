@@ -29,7 +29,6 @@
 <script lang='ts'>
 import { defineComponent, ref, watch, onMounted, PropType, computed, } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
-import { Screen } from 'quasar'
 import { Tab } from 'src/layouts/navData';
 
 interface Tag {

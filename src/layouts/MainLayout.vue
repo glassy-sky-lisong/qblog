@@ -121,7 +121,7 @@
       </router-view>
     </q-page-container>
 
-   <settings-card :current-user='currentUser' @update-user='updateUser' ref='procardRef' ></settings-card>
+   <settings-card :current-user='currentUser' ref='procardRef' ></settings-card>
 
     <q-dialog v-model="confirm" persistent>
       <q-card>
@@ -161,7 +161,7 @@ export default defineComponent({
     const search = ref('')
     const keepAlivedList = ref<string[]>([])
     const store = useStore()
-    const currentUser = computed(() => store.getters.currentUser)
+    const currentUser = computed(() => store.state.currentUser)
     const confirm = ref(false)
 
     const navs = ref<Nav[]>([])
@@ -214,13 +214,6 @@ export default defineComponent({
     toggleLeftDrawer() {
       this.leftDrawerOpen = !this.leftDrawerOpen
     },
-    updateUser({ username, password }) {
-      this.$store.commit('updateUser', {
-        username,
-        password,
-      })
-    //  async update user
-    }
   }
 })
 </script>

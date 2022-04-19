@@ -43,13 +43,14 @@
 
 <script lang='ts'>
 import { UserProps } from 'src/store'
-import { defineComponent, ref, PropType, onMounted, watch } from 'vue'
+import { defineComponent, ref, PropType, onMounted, computed } from 'vue'
 import PopCard from 'components/PopCard/PopCard.vue'
 import SimpleList from 'src/components/simepleList/simpleList.vue'
 import SimpleItem from 'src/components/simepleList/simpleItem.vue'
+import { useStore } from 'src/store'
 
 export default defineComponent({
-  name: 'Procard',
+  name: 'SettingsCard',
   components: { PopCard, SimpleList, SimpleItem },
   props: {
    currentUser: {
@@ -57,32 +58,35 @@ export default defineComponent({
      required: true
    }
   },
-  emits: [ 'updateUser' ],
+  expose: [ 'openCard' ],
   setup(props) {
-    const editUser = ref<Partial<UserProps>>({
-      id: -1,
-      username: '',
-      password: '',
-    })
-
-    watch(editUser.value, (n, o) => {
-      console.log(n, o)
+    const store = useStore()
+    const editUser = computed({
+      get: () => {
+        return { username: props.currentUser.username, password: props.currentUser.password }
+      },
+      set: val => { store.commit('updateUser', val) },
     })
 
     onMounted(() => {
-      editUser.value.id = props.currentUser.id
-      editUser.value.username = props.currentUser.username
-      editUser.value.password = props.currentUser.password
+      console.log(props.currentUser)
+      const { username, password, } = props.currentUser
+
+      editUser.value = { username, password }
+
     })
 
     return {
       editUser,
-      settings: ref(false)
+      settings: ref(false),
     }
   },
   methods: {
     saveCard(close: Function) {
-      this.$emit('updateUser', this.editUser)
+      this.$store.commit('updateUser', {
+        username: this.editUser.username,
+        password: this.editUser.password
+      })
       close()
     },
     openCard() {
